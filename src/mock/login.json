@@ -1,0 +1,16 @@
+{
+	"success": true,
+	"message": "",
+	"detail": null,
+	"list": null,
+	"data": {
+		"sessionid": "5fc99428-0e80-4214-bbd7-a1e4f2f0c037",
+		"bizareadata": [{
+			"ParentId": null,
+			"Name": "上海普华科技",
+			"Id": "00000000-0000-0000-0000-00000000000a",
+			"Code": "shPower"
+		}],
+		"humanid": "ad000000-0000-0000-0000-000000000000"
+	}
+}

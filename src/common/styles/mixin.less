@@ -1,0 +1,164 @@
+.baseBgColor() {
+  background-color: #EFEFF4;
+}
+.active-status() {
+  color: #007ACC;
+}
+
+.baseFontColor() {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.clearfloat () {
+  zoom: 1;
+  &:after{
+    display: block;
+    clear: both;
+    content: "";
+    visibility: hidden;
+    height: 0
+  }
+}
+
+.css3-ellipsis() {
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+
+// 扩展点击区域
+.extend-click() {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+  }
+}
+
+.common-font-color() {
+  color: rgba(0, 0, 0, 0.8)
+}
+
+.font-color-sky() {
+  color: #30B5D6;
+}
+
+.font-color-red() {
+  color: #E77471;
+}
+
+.positionCenter() {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// input行
+.input-row() {
+  position: relative;
+  height: 40px;
+  clear: left;
+  overflow: hidden;
+  background-color: #ffffff;
+  &:after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 15px;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+  }
+}
+
+// 文字部分
+.label-text() {
+  font-weight: normal;
+  vertical-align: baseline;
+  line-height: 40px;
+  float: left;
+  width: 35%;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.5);
+  padding-left: 10px;
+}
+
+// input框的部分
+.input() {
+  float: right;
+  width: 65%;
+  height: 40px;
+  line-height: 21px;
+  margin-bottom: 0;
+  font-size: 14px;
+  outline-style: none;
+  vertical-align: baseline;
+  background-color: #FAFAFA;
+  padding-left: 10px;
+}
+
+.top-line() {
+  position: relative;
+  &:before {
+    position: absolute;
+    right: 0;
+    top: 0;
+    left: 0;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+  }
+}
+
+.bottom-line() {
+  position: relative;
+  &:after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+  }
+}
+
+.right-arrow() {
+  position: relative;
+  &:after {
+    position: absolute;
+    top: 8px;
+    content: "";
+    width: 0;
+    height: 0;
+    border-top: 15px solid #98E165;
+    border-right: 15px solid transparent;
+    right: -10px;
+    box-sizing: border-box;
+  }
+}
+.left-arrow() {
+  position: relative;
+  &:before {
+    position: absolute;
+    top: 8px;
+    content: "";
+    width: 0;
+    height: 0;
+    border-top: 15px solid #ffffff;
+    border-left: 15px solid transparent;
+    left: -10px;
+    box-sizing: border-box;
+  }
+}

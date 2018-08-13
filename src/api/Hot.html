@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HotAPI测试</title>
+  <style>
+    body {
+      padding: 10px 0 0 0;
+      margin: 0px;
+    }
+
+    #main {
+      float: left;
+      width: 100%;
+      height: auto;
+    }
+
+    #left {
+      float: left;
+      border: 0px solid red;
+      width: 60%;
+    }
+
+    #right {
+      float: left;
+      border: 0px solid red;
+      width: 40%;
+    }
+
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="main">
+    <div id="left">
+      &nbsp;&nbsp;地址&nbsp;
+      <input id="url" type="text" style="width:80%;" />
+      <ul>
+        <li id="Logout" title="">
+          <a href="#">注销</a>
+        </li>
+        <li id="UserSession" title="">
+          <a href="#">用户Session</a>
+        </li>
+        <li id="UserInfo" title="">
+          <a href="#">人员信息</a>
+        </li>
+        <li id="Menu" title="">
+          <a href="#">菜单信息</a>
+        </li>
+        <li id="MenuWidget" title="MenuId">
+          <a href="#">获取指定菜单下有权限的Widget列表@MenuId</a>
+        </li>
+        <li id="EpsProjects" title="">
+          <a href="#">EPS&项目信息</a>
+        </li>
+        <li id="ProjectInfo" title="ProjectGuid">
+          <a href="#">项目详细信息@ProjectGuid</a>
+        </li>
+        <li id="SwitchEpsProject" title="ProjectGuid">
+          <a href="#">切换项目@ProjectGuid</a>
+        </li>
+        <li id="ChangePass" title="OldPass,NewPass">
+          <a href="#">修改密码@OldPass,NewPass</a>
+        </li>
+        <li id="PassRole" title="">
+          <a href="#">密码强度规则</a>
+        </li>
+        <li id="UpdHumanInfo" title="HumanInfo">
+          <a href="#">修改人员信息@HumanInfo(json格式的人员信息字段)</a>
+        </li>
+        <li id="BusinessDataLoad" title="KeyWord,KeyValue">
+          <a href="#">通过关键词及关键字获取当前业务对象的所有数据(含子表)@KeyWord,KeyValue</a>
+        </li>
+        <li id="BaseDataList" title="DataType">
+          <a href="#">获取基础数据BaseDataList@DataType</a>
+        </li>
+        <li id="GetDocFiles" title="KeyWord,KeyValue,select,swhere,sort,index,size">
+          <a href="#">读取附件信息@KeyWord,KeyValue,select,swhere,sort,index,size</a>
+        </li>
+        <li id="MyNotifyInfos" title="types,index,size,swhere">
+          <a href="#">获取当前人员的个人通知，包括待处理的、已处理的、我发起的@types(infos,actived,joins),index,size,swhere</a>
+        </li>
+        <li id="MyMessageInfos" title="types,index,size,swhere">
+          <a href="#">获取当前人员的个人消息，包括已读、未读、发送@types(infos,actived,joins),index,size,swhere</a>
+        </li>
+        <li id="MyWorkInfos" title="types,index,size,swhere">
+          <a href="#">获取当前登录用户 待审批、发起、参与的流程信息@types(infos/actived/join:我的待审批/我发起的流程/我参与的流程),index,size,swhere</a>
+        </li>
+        <li id="MyInformCount" title="HumanId">
+          <a href="#">获取当前登录用户的个人通知、消息、待办记录总数infos@HumanId(可缺省)</a>
+        </li>
+        <li id="FlowAction" title="JsonData">
+          <a href="#">流程控制@JsonData(Json格式的流程数据参数)</a>
+        </li>
+        <li id="GridPageLoad" title="KeyWord,KeyWordType,select,swhere,sort,index,size,extparams">
+          <a href="#">加载窗体列表数据,包含缺省权限@KeyWord,KeyWordType,select,swhere,sort,index,size,extparams</a>
+        </li>
+        <li id="FormInit" title="FormId,FormState,KeyValue">
+          <a href="#">获取FormId对应的Config配置文件@FormId,FormState,KeyValue</a>
+        </li>
+        <li id="FormInit2" title="FormId,FormState,KeyValue">
+          <a href="#">
+            <s>获取FormId对应的Config配置文件(直接引用FormControl内置暂时有错误升级到201809以上版本可用)@FormId,FormState,KeyValue</s>
+          </a>
+        </li>
+        <li id="FormLoad" title="KeyWord,KeyWordType,KeyValue,select,formstate">
+          <a href="#">加载表单单条数据@KeyWord,KeyWordType,KeyValue,select,formstate(KeyValue为空,表示获取一条新增记录,formstate:view/add/edit 3个值)</a>
+        </li>
+        <li id="FormData" title="FormId,KeyValue,extparams">
+          <a href="#">加载表单数据(含配置的子表)@FormId,KeyValue,extparams(缺省)</a>
+        </li>
+        <li id="FormSave" title="JsonData,FormId,Encode,Params">
+          <a href="#">
+            保存表单数据@JsonData(表单json格式参数),
+            FormId,Encode(缺省参数是否base64编码true,base),Params
+            (缺省参数json对象base64编码后的字符串)
+          </a>
+        </li>
+
+        <li id="Test" title="Test">
+          <a href="#">Test@Test</a>
+        </li>
+        <li id="Test" title="Test">
+          <a href="#">Test@Test</a>
+        </li>
+        <li id="Test" title="Test">
+          <a href="#">Test@Test</a>
+        </li>
+      </ul>
+    </div>
+    <div id="right">
+      user&nbsp;
+      <input id="user" type="text" value="admin" />&nbsp;&nbsp; pass&nbsp;
+      <input id="pass" type="password" />&nbsp;&nbsp;
+      <button id="login">登录</button>&nbsp;&nbsp;
+      <textarea id="txt1" style="width:95%;height:50px;margin-top:10px;"></textarea>
+      <textarea id="txt2" style="width:95%;height:100px;"></textarea>
+      <div id="params" style="width:100%;margin-bottom:10px;"></div>
+      <button id="btn">测试</button>
+    </div>
+  </div>
+  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script type="text/javascript">
+    //var path = "http://127.0.0.1:801/Hoter/";
+    var path = "http://bj.goodr.cn:8003/Hoter/";
+    $(function () {
+      $("#url").val(path + "Login");
+      $("li").click(function () {
+        $("#url").val(path + this.id);
+        $("#params").empty();
+        if (this.title != "") {
+          var params = this.title.split(",");
+          $.each(params, function (k, n) {
+            $("#params").append(n + ':<input id="' + n + '" type="text"/>');
+          });
+        }
+      });
+      $("#login").click(function () {
+        var usercode = $("#user").val();
+        var userpass = $("#pass").val();
+        $.ajax({
+          url: path + "Login",
+          type: "POST",
+          data: {
+            UserCode: usercode,
+            UserPass: userpass,
+            Language: "zh-cn"
+          },
+          cache: false,
+          success: function (text) {
+            tmp = JSON.parse(text);
+            if (tmp.success) {
+              window.localStorage.setItem("Token", tmp.data.token);
+              $("#txt1").val(tmp.data.token);
+            } else
+              $("#txt1").val(tmp.message);
+          }
+        });
+      });
+      $("#btn").click(function () {
+        var txt = ($("#txt1").val() != "") ? $("#txt1").val() : window.localStorage.getItem("Token"); //获取token
+        var url = $("#url").val(); //获取路径
+        var data = {};
+        $.each($("#params")[0].children, function (k, n) {
+          data[n.id] = n.value; //其他参数
+        });
+        data.Token = txt; //token参数
+        $.ajax({
+          url: url,
+          type: "POST",
+          data: data,
+          success: function (text) {
+            tmp = JSON.parse(text);
+            if (tmp.success)
+              $("#txt2").val(JSON.stringify(tmp.data));
+            else
+              $("#txt2").val(tmp.message);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
