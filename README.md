@@ -1,4 +1,4 @@
-# zhongji
+# power-weixin-webapp
 
 > A Vue.js project
 
