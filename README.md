@@ -2,10 +2,6 @@
 
 > A Vue.js project vue2.0, vux, cube-ui , axios, ES6, webpack3.0
 
-> I like Vue and i like new front-end technology
-
-> I want to make a webapp with a good user experience by vue.
-
 ## Build Setup
 
 ``` bash

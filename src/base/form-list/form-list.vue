@@ -7,12 +7,12 @@
     </div>
     <div @click.prevent="selectItem(item)" class="list-unit-inner">
       <div class="list-title">
-        {{ title }}
+        {{ option.title ? option.title + ':' : '' }} {{ title }}
       </div>
       <div class="list-content">
-        <div class="list-item left">{{left}}</div>
-        <div class="list-item center">{{center}}</div>
-        <div class="list-item right">{{right}}</div>
+        <div class="list-item left">{{ option.left ? option.left + ':' : '' }}{{left}}</div>
+        <div class="list-item center">{{ option.center ? option.center + ':' : '' }} {{center}}</div>
+        <div class="list-item right">{{ option.right ? option.right + ':' : '' }} {{right}}</div>
       </div>
       <div v-if="tagShow" class="list-tag">
         {{ tag }}
@@ -29,6 +29,17 @@ export default {
       type: Object,
       default () {
         return {}
+      }
+    },
+    option: {
+      type: Object,
+      default () {
+        return {
+          title: '',
+          left: '',
+          center: '',
+          right: ''
+        }
       }
     },
     showCheckBox: {
@@ -94,6 +105,7 @@ export default {
 
   .list-unit-wrap{
     display: flex;
+    box-shadow:3px 3px 6px #dddddd;
     .list-checkbox{
       flex: 0 0 40px;
       width: 40px;

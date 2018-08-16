@@ -13,155 +13,231 @@
           </div>
         </nav-list>
       </header>
-      <div class="form-content" :style="{'height': formContentHeight + 'px'}">
+      <div class="form-content">
         <div v-show="_isShow(0)" class="form-content-item mainTable">
           <form class="input-textarea-group">
-            <div class="input-row">
-              <label class="label-text">主合同编号</label>
-              <input v-model="viewDataPool.ContractReviewMain.ContractCode" readonly type="text" class="input" placeholder="主合同编号">
-            </div>
-            <div class="input-row">
-              <label class="label-text">财务编号</label>
-              <input v-model="viewDataPool.ContractReviewMain.FinanceNum" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">项目编号</label>
-              <input v-model="viewDataPool.ContractReviewMain.projectApprovalCode" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">合同状态</label>
-              <power-select
-                class="input"
-                v-model="viewDataPool.ContractReviewMain.ContractStatus"
-                :comboboxdata="formAllConfig.comboboxdata"
-                KeyWord="ContractReviewMain"
-                field="ContractStatus"
-                title="合同状态"
-                @change="change"
-              >
-              </power-select>
-            </div>
-            <div class="input-row">
-              <label class="label-text">项目名称(中文)</label>
-              <input v-model="viewDataPool.ContractReviewMain.ProjectName" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">项目名称(英文)</label>
-              <input v-model="viewDataPool.ContractReviewMain.EnProjectName" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">合同名称</label>
-              <input v-model="viewDataPool.ContractReviewMain.ContractTitle" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">投标评审</label>
-              <input v-model="viewDataPool.ContractReviewMain.TenderEvaluationCode" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">业主名称</label>
-              <input v-model="viewDataPool.ContractReviewMain.ProjectOwner" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">合同等额人民币</label>
-              <input v-model="viewDataPool.ContractReviewMain.ContractAmountRMB" type="number" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">项目开发人员</label>
-              <input v-model="viewDataPool.ContractReviewMain.ResponsiblePerson" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">评审类型</label>
-              <power-select
-                class="input"
-                v-model="viewDataPool.ContractReviewMain.ProjectArea"
-                :comboboxdata="formAllConfig.comboboxdata"
-                KeyWord="ContractReviewMain"
-                field="ProjectArea"
-                title="评审类型"
-                @change="change"
-              >
-              </power-select>
-            </div>
-            <div class="input-row">
-              <label class="label-text">评审方式</label>
-              <input v-model="viewDataPool.ContractReviewMain.ReviewMode" type="text" class="input" placeholder="">
-              <power-select
-                class="input"
-                v-model="viewDataPool.ContractReviewMain.ReviewMode"
-                :comboboxdata="formAllConfig.comboboxdata"
-                KeyWord="ContractReviewMain"
-                field="ReviewMode"
-                title="评审方式"
-                @change="change"
-              >
-              </power-select>
-            </div>
-            <div class="input-row">
-              <label class="label-text">部门名称</label>
-              <input v-model="viewDataPool.ContractReviewMain.TrackingDepartment" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">部门编码</label>
-              <input v-model="viewDataPool.ContractReviewMain.DeptsCode" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">项目开发状态</label>
-              <input v-model="viewDataPool.ContractReviewMain.ProjectStatus" type="text" class="input" placeholder="">
-            </div>
-            <div class="input-row">
-              <label class="label-text">表单状态</label>
-              <power-select
-                class="input"
-                v-model="viewDataPool.ContractReviewMain.Status"
-                :comboboxdata="formAllConfig.comboboxdata"
-                KeyWord="ContractReviewMain"
-                field="Status"
-                title="表单状态"
-                @change="change"
-              >
-              </power-select>
-            </div>
-            <div class="input-row">
-              <label class="label-text">是否审批</label>
-              <power-select
-                class="input"
-                v-model="viewDataPool.ContractReviewMain.IsReview"
-                :comboboxdata="formAllConfig.comboboxdata"
-                KeyWord="ContractReviewMain"
-                field="IsReview"
-                title="是否审批"
-                @change="change"
-              >
-              </power-select>
-            </div>
-            <div class="input-row">
-              <label class="label-text">是否完成复审</label>
-              <power-select
-                class="input"
-                v-model="viewDataPool.ContractReviewMain.IsCompleteReview"
-                :comboboxdata="formAllConfig.comboboxdata"
-                KeyWord="ContractReviewMain"
-                field="IsCompleteReview"
-                title="是否完成复审"
-                @change="change"
-              >
-              </power-select>
-            </div>
-            <div class="input-row">
-              <label class="label-text">录入人</label>
-              <input v-model="viewDataPool.ContractReviewMain.RegHumName" readonly type="text" class="input" placeholder="">
-            </div>
+            <form-row
+              label="主合同编号"
+              type="text"
+              placeholder="请输入合同编号"
+              v-model="viewDataPool.ContractReviewMain.ContractCode"
+              field="ContractCode"
+              KeyWord="ContractReviewMain"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="财务编号"
+              type="text"
+              placeholder="请输入财务编号"
+              field="FinanceNum"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.FinanceNum"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="项目编号"
+              type="text"
+              placeholder="请输入项目编号"
+              field="projectApprovalCode"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.projectApprovalCode"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="合同状态"
+              type="select"
+              placeholder="合同状态"
+              field="ContractStatus"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.ContractStatus"
+              :comboboxdata="formAllConfig.comboboxdata"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="项目名称(中文)"
+              type="text"
+              placeholder="请输入项目名称(中文)"
+              field="ProjectName"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.ProjectName"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="项目名称(英文)"
+              type="text"
+              placeholder="请输入项目名称(英文)"
+              field="EnProjectName"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.EnProjectName"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="合同名称"
+              type="text"
+              placeholder="请输入合同名称"
+              field="ContractTitle"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.ContractTitle"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="投标评审"
+              type="text"
+              placeholder="请输入投标评审"
+              field="TenderEvaluationCode"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.TenderEvaluationCode"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="业主名称"
+              type="text"
+              placeholder="请输入业主名称"
+              field="ProjectOwner"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.ProjectOwner"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="合同等额人民币"
+              type="text"
+              placeholder="￥"
+              field="ContractAmountRMB"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.ContractAmountRMB"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="项目开发人员"
+              type="text"
+              placeholder="请输入项目开发人员"
+              field="ResponsiblePerson"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.ResponsiblePerson"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="评审类型"
+              type="select"
+              placeholder="评审类型"
+              field="ProjectArea"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.ProjectArea"
+              :comboboxdata="formAllConfig.comboboxdata"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="评审方式"
+              type="select"
+              placeholder="评审方式"
+              field="ReviewMode"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.ReviewMode"
+              :comboboxdata="formAllConfig.comboboxdata"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="部门名称"
+              type="text"
+              placeholder="请输入部门名称"
+              field="TrackingDepartment"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.TrackingDepartment"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="部门编码"
+              type="text"
+              placeholder="请输入部门编码"
+              field="DeptsCode"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.DeptsCode"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="项目开发状态"
+              type="text"
+              placeholder="请输入项目开发状态"
+              field="ProjectStatus"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.ProjectStatus"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="表单状态"
+              type="select"
+              placeholder="请输入表单状态"
+              field="Status"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.Status"
+              :comboboxdata="formAllConfig.comboboxdata"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="是否审批"
+              type="select"
+              placeholder="请输入是否审批"
+              field="IsReview"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.IsReview"
+              :comboboxdata="formAllConfig.comboboxdata"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="是否完成复审"
+              type="select"
+              placeholder="是否完成复审"
+              field="IsCompleteReview"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.IsCompleteReview"
+              :comboboxdata="formAllConfig.comboboxdata"
+              @enterChange="formRowChange"
+            ></form-row>
+
+            <form-row
+              label="录入人"
+              type="text"
+              placeholder="录入人"
+              field="RegHumName"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.RegHumName"
+              :readonly="true"
+              @enterChange="formRowChange"
+            ></form-row>
+
             <div class="input-row">
               <label class="label-text">录入日期</label>
               <input @click="showDataPicker" v-model="viewDataPool.ContractReviewMain.RegDate" readonly type="text" class="input" placeholder="录入日期">
             </div>
 
-            <div class="textarea-row">
-              <label class="label-text">项目跟踪情况</label>
-              <group class="textarea-content">
-                <x-textarea v-model="viewDataPool.ContractReviewMain.Remark" :max="200" name="description"></x-textarea>
-              </group>
-            </div>
+            <form-row
+              label="项目跟踪情况"
+              type="textarea"
+              placeholder="项目跟踪情况"
+              field="Remark"
+              KeyWord="ContractReviewMain"
+              v-model="viewDataPool.ContractReviewMain.Remark"
+              @enterChange="formRowChange"
+            ></form-row>
+
           </form>
           <div class="form-action-wrap">
            <span @click="showActionMenu">
@@ -174,60 +250,60 @@
           <contract-currency
             KeyWord="CHMC_ReviewCurrencySum"
             :KeyValue="routerParams.Id"
-            :data="viewDataPool.CHMC_ReviewCurrencySum"
+            :data="viewDataPool.CHMC_ReviewCurrencySum.values"
             :formAllConfig="formAllConfig"
             :winConfig="winConfig"
-            @saveChildFrom="_BusinessDataLoad(winConfig)"
+            @saveChildFrom="_FormData(winConfig)"
           ></contract-currency>
         </div>
         <div v-show="_isShow(2)"  class="form-content-item child-table">
           <review-project
             KeyWord="CHMC_MainReviewContent"
             :KeyValue="routerParams.Id"
-            :data="viewDataPool.CHMC_MainReviewContent"
+            :data="viewDataPool.CHMC_MainReviewContent.values"
             :formAllConfig="formAllConfig"
             :winConfig="winConfig"
-            @saveChildFrom="_BusinessDataLoad(winConfig)"
+            @saveChildFrom="_FormData(winConfig)"
           ></review-project>
         </div>
         <div v-show="_isShow(3)"  class="form-content-item child-table">
           <deviation-specification
             KeyWord="CHMC_ContractReviewDeviation"
             :KeyValue="routerParams.Id"
-            :data="viewDataPool.CHMC_ContractReviewDeviation"
+            :data="viewDataPool.CHMC_ContractReviewDeviation.values"
             :formAllConfig="formAllConfig"
             :winConfig="winConfig"
-            @saveChildFrom="_BusinessDataLoad(winConfig)"
+            @saveChildFrom="_FormData(winConfig)"
           ></deviation-specification>
         </div>
         <div v-show="_isShow(4)"  class="form-content-item child-table">
           <risk-assessment
             KeyWord="CHMC_ProjectRiskAssess"
             :KeyValue="routerParams.Id"
-            :data="viewDataPool.CHMC_ProjectRiskAssess"
+            :data="viewDataPool.CHMC_ProjectRiskAssess.values"
             :formAllConfig="formAllConfig"
             :winConfig="winConfig"
-            @saveChildFrom="_BusinessDataLoad(winConfig)"
+            @saveChildFrom="_FormData(winConfig)"
           ></risk-assessment>
         </div>
         <div v-show="_isShow(5)"  class="form-content-item child-table">
           <profit-analysis
             KeyWord="CHMC_MainCostProfit"
             :KeyValue="routerParams.Id"
-            :data="viewDataPool.CHMC_MainCostProfit"
+            :data="viewDataPool.CHMC_MainCostProfit.values"
             :formAllConfig="formAllConfig"
             :winConfig="winConfig"
-            @saveChildFrom="_BusinessDataLoad(winConfig)"
+            @saveChildFrom="_FormData(winConfig)"
           ></profit-analysis>
         </div>
         <div v-show="_isShow(6)"  class="form-content-item child-table">
           <opening-record
           KeyWord="CHMC_ContractMainBid"
           :KeyValue="routerParams.Id"
-          :data="viewDataPool.CHMC_ContractMainBid"
+          :data="viewDataPool.CHMC_ContractMainBid.values"
           :formAllConfig="formAllConfig"
           :winConfig="winConfig"
-          @saveChildFrom="_BusinessDataLoad(winConfig)"
+          @saveChildFrom="_FormData(winConfig)"
           ></opening-record>
         </div>
         <div v-show="_isShow(7)" class="form-content-item file-attach">
@@ -240,13 +316,13 @@
           <comment></comment>
         </div>
       </div>
+
       <actionsheet
         v-model="actionMenuShow"
         :menus="actionMenu"
         show-cancel
         @on-click-menu="selectActionMenu"
       ></actionsheet>
-
       <date-picker class="data-picker" ref="updateDataPicker"
         :min="dataPicker.min"
         :max="dataPicker.max"
@@ -280,7 +356,8 @@ import {
   formatDate,
   formatFormAllConfig,
   formatFromDataToView,
-  formatFromDataToSave
+  formatFromDataToSave,
+  organizeParams
 } from 'common/js/Util.js'
 
 // http api
@@ -288,9 +365,11 @@ import {
   MenuWidget,
   FormLoad,
   FormInit,
-  FormSave2,
-  BusinessDataLoad
+  FormSave,
+  FormData
 } from 'api/index.js'
+
+import FormRow from 'base/form-row/form-row.vue'
 
 const DIRICTION_H = 'horizontal'
 
@@ -332,35 +411,21 @@ export default {
         //   name: '评论'
         // }
       ],
-      formContentHeight: 200,
       direction: DIRICTION_H,
       tabUnitWidth: 120,
       computedWidth: {
         width: '400px'
       },
-      actionMenuShow: false,
-      actionMenu: [{
-        label: '终止'
-      }, {
-        label: '撤回'
-      }, {
-        label: '委派'
-      }, {
-        label: '送审'
-      }, {
-        label: '保存',
-        value: 'SaveForm'
-      }],
       winConfig: {},
       formAllConfig: {},
       viewDataPool: {
         ContractReviewMain: {},
-        CHMC_ReviewCurrencySum: [],
-        CHMC_MainReviewContent: [],
-        CHMC_ContractReviewDeviation: [],
-        CHMC_ContractMainBid: [],
-        CHMC_ProjectRiskAssess: [],
-        CHMC_MainCostProfit: []
+        CHMC_ReviewCurrencySum: {},
+        CHMC_MainReviewContent: {},
+        CHMC_ContractReviewDeviation: {},
+        CHMC_ContractMainBid: {},
+        CHMC_ProjectRiskAssess: {},
+        CHMC_MainCostProfit: {}
       },
       dataPicker: {
         title: '日期',
@@ -388,50 +453,43 @@ export default {
     this.routerParams = this.$router.history.current.params
   },
   mounted () {
-    this.getFormContentHeight()
-
     this._MenuWidget(() => {
       this._FormInit(this.winConfig, () => {
         this._FormMainLoad(this.winConfig)
 
         let formstate = this.routerParams.formstate
         if (formstate !== 'add') {
-          this._BusinessDataLoad(this.winConfig)
+          this._FormData(this.winConfig)
         }
       })
     })
   },
   methods: {
+    formRowChange (item) {
+      this.viewDataPool[item.KeyWord][item.field] = item.value
+    },
     // 保存主表
     saveFromData () {
-      let params = {
-        JsonData: '',
-        FormId: ''
-      }
       let KeyWord = this.winConfig.joindata.KeyWord
-      let obj = {}
+      let formDate = this.routerParams.formstate
       let objItem = formatFromDataToSave(
         this.formAllConfig.comboboxdata,
         this.viewDataPool[KeyWord],
         KeyWord
       )
-      obj[KeyWord] = {
+      let obj = {
+        KeyWord: KeyWord,
+        formAllConfig: this.formAllConfig,
         KeyWordType: 'BO',
-        data: []
+        data: [objItem],
+        formDate: formDate,
+        FormId: this.winConfig.openformid
       }
-      let formstate = this.routerParams.formstate
-      if (formstate === 'edit') {
-        objItem['_state'] = 'modified'
-      } else if (formstate === 'add') {
-        objItem['_state'] = 'added'
-      }
-      obj[KeyWord].data.push(objItem)
-      params.JsonData = JSON.stringify(obj)
-      params.FormId = this.winConfig.openformid
-      this.MinXinHttpFetch(FormSave2(params), (response) => {
+      let params = organizeParams(obj)
+      this.MinXinHttpFetch(FormSave(params), (response) => {
         if (response.success) {
           this.mx_toastShow = true
-          if (formstate === 'add') {
+          if (formDate === 'add') {
             this.$router.back()
           }
         }
@@ -464,7 +522,7 @@ export default {
       this.MinXinHttpFetch(FormInit(params), (response) => {
         let obj = Object.assign({}, response.data)
         this.formAllConfig = formatFormAllConfig(obj)
-        // console.log(this.formAllConfig)
+        console.log(this.formAllConfig)
 
         if (callback) {
           callback()
@@ -498,23 +556,20 @@ export default {
         }
       })
     },
-    // 获取所有子表的数据
-    _BusinessDataLoad (winConfig) {
+    // 获取表单的所有子表信息
+    _FormData (winConfig) {
       let params = {
-        KeyWord: winConfig.joindata.KeyWord,
-        KeyValue: this.routerParams.Id
+        FormId: winConfig.openformid,
+        KeyValue: this.routerParams.Id,
+        extparams: ''
       }
-      this.MinXinHttpFetch(BusinessDataLoad(params), (response) => {
+      this.MinXinHttpFetch(FormData(params), (response) => {
         let getData = response.data.value
-        this.viewDataPool.CHMC_ReviewCurrencySum = getData.CHMC_ReviewCurrencySum.concat()
-        this.viewDataPool.CHMC_MainReviewContent = getData.CHMC_MainReviewContent.concat()
-        this.viewDataPool.CHMC_ContractReviewDeviation = getData.CHMC_ContractReviewDeviation.concat()
-        this.viewDataPool.CHMC_ContractMainBid = getData.CHMC_ContractMainBid.concat()
-        this.viewDataPool.CHMC_ProjectRiskAssess = getData.CHMC_ProjectRiskAssess.concat()
-        this.viewDataPool.CHMC_MainCostProfit = getData.CHMC_MainCostProfit.concat()
+        let childrenData = getData.children
 
-        console.log(getData)
-        console.log(this.viewDataPool)
+        childrenData.forEach((item, index) => {
+          this.viewDataPool[item.KeyWord] = Object.assign({}, item)
+        })
       })
     },
     // 打开日期面板
@@ -525,10 +580,11 @@ export default {
     selectDatePicker (selectDate) {
       this.viewDataPool.ContractReviewMain.RegDate = formatDate(selectDate)
     },
-    // 下来框改变数据
+    // 下拉框改变数据
     change (value, index, KeyWord, field, selectNameData) {
       this.viewDataPool.ContractReviewMain[field] = value
     },
+    // selectAction中的驱动事件
     selectActionMenu (key, item) {
       // 如果点击取消，返回false
       if (!item) {
@@ -538,29 +594,11 @@ export default {
         this.saveFromData()
       }
     },
-    showActionMenu () {
-      this.actionMenuShow = true
-    },
     switchItem (index) {
       if (index === 7) {
         this._fileAttachLoad()
       }
       this.currentIndex = index
-    },
-    getFormContentHeight () {
-      if (this.timerResize) {
-        clearTimeout(this.timerResize)
-      }
-      this.timerResize = setTimeout(() => {
-        this._formContentHeight()
-      }, 200)
-
-      this._resize()
-    },
-    _formatStatus (Status) {
-      if (Status === '0') {
-        return '新增'
-      }
     },
     // 显示附件页面后 执行加载附件
     _fileAttachLoad () {
@@ -571,21 +609,10 @@ export default {
     },
     _isShow (index) {
       return this.currentIndex === index
-    },
-    _formContentHeight () {
-      this.$nextTick(() => {
-        this.formContentHeight =
-        this.$refs.mainForm.offsetHeight -
-        this.$refs.headerBar.offsetHeight
-      })
-    },
-    _resize () {
-      window.addEventListener('resize', () => {
-        this._formContentHeight()
-      })
     }
   },
   components: {
+    FormRow,
     ContractCurrency,
     ReviewProject,
     DeviationSpecification,
@@ -625,6 +652,7 @@ export default {
     }
     .form-content{
       display: block;
+      height: calc(100% - 38px);
       .form-content-item {
         position: relative;
         display: block;

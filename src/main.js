@@ -4,6 +4,7 @@ import 'common/styles/index.less'
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 import { WechatPlugin, LoadingPlugin } from 'vux'
 import Cube from 'cube-ui'
 import VueLazyload from 'vue-lazyload'
@@ -30,6 +31,7 @@ routerBeforeEach(router)
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

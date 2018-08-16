@@ -7,8 +7,11 @@
     @diff-change="diffChange"
     >
       <cube-scroll
+      ref="BusinessScroll"
       :scroll-events="scrollEvents"
       @scroll="scrollHandler"
+      :options="options"
+      @pulling-down="onPullingDown"
       >
         <div ref="businessHeader" class="business-header">
           <div class="content-logo">
@@ -140,8 +143,6 @@
     </cube-sticky>
 
     <router-view></router-view>
-
-    <loading v-model="mx_isLoading"></loading>
     <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">修改成功</toast>
     <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
   </div>
@@ -166,6 +167,7 @@ export default {
       scrollY: 0,
       checkTop: true,
       scrollEvents: ['scroll'],
+      pullDownRefreshThreshold: 60,
       mx_isLoading: false,
       mx_message: '',
       mx_alertShow: false,
@@ -174,12 +176,30 @@ export default {
       mx_deleyTime: 1000
     }
   },
+  computed: {
+    options () {
+      return {
+        pullDownRefresh: {
+          threshold: parseInt(this.pullDownRefreshThreshold),
+          txt: '刷新成功'
+        },
+        scrollbar: false
+      }
+    }
+  },
   mounted () {
     this._getUserSession((session) => {
       this._MyInformCount(session.HumanId)
     })
   },
   methods: {
+    onPullingDown () {
+      this._getUserSession((session) => {
+        this._MyInformCount(session.HumanId, () => {
+          this.$refs.BusinessScroll.forceUpdate()
+        })
+      })
+    },
     scrollHandler ({ y }) {
       this.scrollY = -y
     },
@@ -202,12 +222,15 @@ export default {
       })
       this.isLoading = true
     },
-    _MyInformCount (HumanId) {
+    _MyInformCount (HumanId, callback) {
       this.MinXinHttpFetch(MyInformCount(HumanId), (response) => {
         let data = response.data
         this.Message = data.Message
         this.Notify = data.Notify
         this.Work = data.Work
+        if (callback) {
+          callback()
+        }
       })
     },
     goToPage (page) {

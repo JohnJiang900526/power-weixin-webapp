@@ -92,9 +92,27 @@ export const commonComponentMixin = {
 // form表单的公共组件和方法
 export const formComponentMixin = {
   data () {
-    return {}
+    return {
+      actionMenuShow: false,
+      actionMenu: [{
+        label: '终止'
+      }, {
+        label: '撤回'
+      }, {
+        label: '委派'
+      }, {
+        label: '送审'
+      }, {
+        label: '保存',
+        value: 'SaveForm'
+      }]
+    }
   },
   methods: {
+    // 显示showAction
+    showActionMenu () {
+      this.actionMenuShow = true
+    },
     // 日期格式化
     _formatDate (date) {
       return formatDate(date)

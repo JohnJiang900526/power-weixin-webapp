@@ -340,7 +340,8 @@ export function organizeParams (objParmas) {
 
   parmas.JsonData = JSON.stringify(obj)
   parmas.FormId = objParmas.FormId
-
+  parmas.Encode = ''
+  parmas.Params = ''
   return parmas
 }
 
@@ -360,6 +361,20 @@ export function listToTreeData (bootItem, Data) {
   } else {
     return false
   }
+}
+
+// 根据searchField搜索
+export function searchLists (searchField, query, arr) {
+  let data = arr.concat()
+  let result = []
+  let pattern = new RegExp(query, 'i')
+  data.forEach((item) => {
+    if (pattern.test(item[searchField])) {
+      result.push(item)
+    }
+  })
+
+  return result
 }
 
 // 在comboboxdata Text查询指定的数据

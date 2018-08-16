@@ -7,8 +7,11 @@
     @diff-change="diffChange"
     >
       <cube-scroll
+      ref="SettingScroll"
       :scroll-events="scrollEvents"
       @scroll="scrollHandler"
+      :options="options"
+      @pulling-down="onPullingDown"
       >
         <cube-sticky-ele>
           <div class="sticky-header">
@@ -148,7 +151,6 @@
       <router-view></router-view>
     </keep-alive>
     <update-human-info @upDateUserInfo="UpdHumanInfo" :field="field" :UserInfo="UserInfo" ref="UpdateHumanInfo"></update-human-info>
-    <loading v-model="mx_isLoading"></loading>
     <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">修改成功</toast>
     <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
   </div>
@@ -173,7 +175,7 @@ export default {
       scrollY: 0,
       checkTop: true,
       scrollEvents: ['scroll'],
-      mx_isLoading: false,
+      pullDownRefreshThreshold: 60,
       mx_message: '',
       mx_alertShow: false,
       mx_alertTitle: '提示',
@@ -184,7 +186,23 @@ export default {
   mounted () {
     this._getUserInfo()
   },
+  computed: {
+    options () {
+      return {
+        pullDownRefresh: {
+          threshold: parseInt(this.pullDownRefreshThreshold),
+          txt: '刷新成功'
+        },
+        scrollbar: false
+      }
+    }
+  },
   methods: {
+    onPullingDown () {
+      this._getUserInfo(() => {
+        this.$refs.SettingScroll.forceUpdate()
+      })
+    },
     scrollHandler ({ y }) {
       this.scrollY = -y
     },
@@ -213,9 +231,12 @@ export default {
         this.$router.push('/weixin/login')
       })
     },
-    _getUserInfo () {
+    _getUserInfo (callback) {
       this.MinXinHttpFetch(getUserInfo(), (response) => {
         this.UserInfo = response.data
+        if (callback) {
+          callback()
+        }
       })
     },
     _formatDate (data) {
@@ -240,6 +261,7 @@ export default {
     bottom: 56px;
     z-index: 100;
     width: 100%;
+    background-color: #f4f4f4;
     overflow-y: auto;
     .sticky-header{
       .header {
@@ -275,6 +297,7 @@ export default {
     }
     .message-list {
       padding:  0 10px;
+      background-color: #ffffff;
       .lists {
         .item-list{
           border-bottom: 1px solid #dddddd;

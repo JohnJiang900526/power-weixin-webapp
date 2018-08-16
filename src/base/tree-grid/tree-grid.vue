@@ -1,6 +1,6 @@
 <template>
   <li class="tree-grid">
-    <div class="grid-line-content">
+    <div class="grid-line-content" :style="{backgroundColor: bgColor}">
       <div @click.stop.prevent="toggle(item)" class="grid-item icon">
         <x-icon class="x-icon" v-show="!open && !isUnderItem" type="ios-plus-outline" size="20"></x-icon>
         <x-icon class="x-icon" v-show="open && !isUnderItem" type="ios-minus-outline" size="20"></x-icon>
@@ -10,11 +10,14 @@
           <check-icon class="check-icon" :value.sync="checked"></check-icon>
         </div>
       </div>
-      <div @click.stop.prevent="selectItemView(item)" class="grid-item main-content">
-        <p class="title">{{ item[title] || '暂无' }}</p>
+      <div @click.stop.prevent="selectItemView(item)"
+           class="grid-item main-content"
+           :style="{paddingLeft: getPaddingLeft}"
+      >
+        <p class="title"> {{ item[title] || '暂无' }}</p>
         <div class="main-content-lists">
           <div class="list-item left">
-            {{ item[left] || '暂无' }}
+           {{ item[left] }}
           </div>
           <div class="list-item center">
             {{ _formatDate(item[center]) || '暂无' }}
@@ -34,6 +37,7 @@
         :left="left"
         :center="center"
         :right="right"
+        :levelNum="computedNum"
         @selectItemView="selectItemView"
         @selectItem="_selectItem"
         @unSelectItem="_unSelectItem"
@@ -74,13 +78,29 @@ export default {
     right: {
       type: String,
       default: ''
+    },
+    levelNum: {
+      type: Number,
+      default: 0
+    }
+  },
+  computed: {
+    bgColor () {
+      return this.levelNum === 0 ? '#95CAFC' : this.levelNum === 1 ? '#CEFFCF' : '#ffffff'
+    },
+    computedNum () {
+      return this.levelNum + 1
+    },
+    getPaddingLeft () {
+      return this.computedNum * 13 + 'px'
     }
   },
   data () {
     return {
       open: true,
       isUnderItem: false,
-      checked: false
+      checked: false,
+      num: 0
     }
   },
   methods: {
@@ -124,7 +144,6 @@ export default {
   @import "~common/styles/mixin.less";
 
   .tree-grid {
-    padding-left: 3px;
     .grid-line-content {
       display: flex;
       padding: 5px 10px;
@@ -142,6 +161,8 @@ export default {
           .x-icon {
             .positionCenter();
             left: 20%;
+            fill: green;
+            display: block;
           }
         }
         &.check-box {

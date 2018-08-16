@@ -9,6 +9,7 @@ import ResetPassword from 'base/reset-password/reset-password.vue'
 import WorkInfos from 'components/sub-module/workInfos/workInfos.vue'
 import MessageInfos from 'components/sub-module/messageInfos/messageInfos.vue'
 import NotifyInfos from 'components/sub-module/notifyInfos/notifyInfos.vue'
+import ChangeProject from 'components/sub-module/change-project/change-project.vue'
 import { redirectRoutes } from 'common/js/Util.js'
 import { winsForms } from 'common/js/winFormLoad.js'
 
@@ -32,7 +33,17 @@ let routesMap = [
     meta: {
       title: '项目中心'
     },
-    component: project
+    component: project,
+    children: [
+      {
+        path: '/weixin/project/changeproject',
+        name: 'changeProject',
+        meta: {
+          title: '选择项目'
+        },
+        component: ChangeProject
+      }
+    ]
   },
   {
     path: '/weixin/business',

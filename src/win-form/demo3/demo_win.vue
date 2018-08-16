@@ -4,7 +4,11 @@
       <div ref="formContent" class="form-content">
         <header class="form-header">
           <div ref="searchWrap" class="search-wrap">
-            <search-box placeholder="搜索表单"></search-box>
+            <search-box
+              v-model="searchQuery"
+              @change="searchChange"
+              placeholder="搜索表单"
+            ></search-box>
           </div>
         </header>
         <div ref="formListsContent" class="form-lists-content" :style="{'height': listsHeight + 'px','minHeight':minHeight + 'px'}">
@@ -58,8 +62,8 @@ import FormList from 'base/form-list/form-list.vue'
 import FooterBar from 'base/footer-bar/footer-bar.vue'
 
 import { commonComponentMixin } from 'common/js/mixin.js'
-import { getMenuId, formatDate, removeList } from 'common/js/Util.js'
-import { MenuWidget, GridPageLoad, FormSave2 } from 'api/index.js'
+import { getMenuId, formatDate, removeList, searchLists } from 'common/js/Util.js'
+import { MenuWidget, GridPageLoad, FormSave } from 'api/index.js'
 import { EFlowRecordStatus } from 'common/js/systemConfig.js'
 
 export default {
@@ -74,6 +78,8 @@ export default {
       selectItems: [],
       actionShow: true,
       pullDownRefreshThreshold: 60,
+      searchQuery: '',
+      searchField: 'ContractTitle',
       config: {},
       mx_isLoading: false,
       mx_message: '',
@@ -108,7 +114,8 @@ export default {
       let formstate = this.$router.history.current.params.formstate
       if (!formstate) {
         this._MenuWidget(() => {
-          this._GridPageLoad(this.config, () => {
+          this._GridPageLoad(this.config, (data) => {
+            this.formList = data
             if (callback) {
               callback()
             }
@@ -130,7 +137,7 @@ export default {
       })
     },
     // 加载窗体中的数据
-    _GridPageLoad (config, callback) {
+    _GridPageLoad (config, callback, searchQuery) {
       let params = {
         KeyWord: config.joindata.KeyWord,
         KeyWordType: 'BO',
@@ -147,10 +154,12 @@ export default {
         if (value !== '') {
           getData = JSON.parse(value)
         }
-        this.formList = getData.concat()
-        console.log(getData)
-        if (callback) {
-          callback()
+        if (!searchQuery || searchQuery === '') {
+          if (callback) {
+            callback(getData)
+          }
+        } else {
+          callback(getData)
         }
       })
     },
@@ -172,11 +181,22 @@ export default {
       }
       params.JsonData = JSON.stringify(obj)
       params.FormId = this.config.openformid
-      this.MinXinHttpFetch(FormSave2(params), (response) => {
+      this.MinXinHttpFetch(FormSave(params), (response) => {
         if (callback) {
           callback()
         }
       })
+    },
+    // search start
+    searchChange (query) {
+      this.searchQuery = query
+      this.doSearchEvent()
+    },
+    // search action
+    doSearchEvent () {
+      this._GridPageLoad(this.config, (data) => {
+        this.formList = searchLists(this.searchField, this.searchQuery, data)
+      }, this.searchQuery)
     },
     // 选中一条数据的事件
     _selectItem (item) {
@@ -204,7 +224,9 @@ export default {
       this._removeFormList(() => {
         this.showCheckBox = false
         this.selectItems = []
-        this._GridPageLoad(this.config)
+        this._GridPageLoad(this.config, (data) => {
+          this.formList = data
+        })
       })
     },
     // 删除
@@ -265,7 +287,7 @@ export default {
   }
 }
 </script>
-<style lang="less"  rel="stylesheet/less">
+<style lang="less" rel="stylesheet/less">
   @import "~common/styles/mixin.less";
 
   .win-form {

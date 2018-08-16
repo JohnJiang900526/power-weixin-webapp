@@ -4,7 +4,15 @@
       <span class="search-icon">
         <span class="fa fa-search"></span>
       </span>
-      <input ref="query" @focus="focusSearch" @blur="blurSearch" class="search-input" type="text" v-model="query" :placeholder="placeholder">
+      <input
+        ref="query"
+        class="search-input"
+        type="text"
+        v-model="query"
+        :placeholder="placeholder"
+        @focus="focusSearch"
+        @blur="blurSearch"
+      >
       <span class="clear-icon-wrap">
         <span class="clear-icon" v-show="query" @click="clearQuery">
           <x-icon type="ios-close-empty" size="25"></x-icon>
@@ -19,7 +27,8 @@ export default {
     placeholder: {
       type: String,
       default: '搜索项目名称'
-    }
+    },
+    value: null
   },
   data () {
     return {
@@ -41,6 +50,17 @@ export default {
     },
     blur () {
       this.$refs.query.blur()
+    }
+  },
+  watch: {
+    query (newQuery) {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+
+      this.timer = setTimeout(() => {
+        this.$emit('change', newQuery)
+      }, 400)
     }
   }
 }

@@ -1,68 +1,76 @@
 <template>
-  <div class="change-project" ref="changeProject" :style="{'transform': 'translate3d(' + this.offset + '%, 0, 0)'}">
-    <div ref="headerChange" class="header-change">
-      <span @click="hide" class="back-icon" :style="{'width': angleWidth + 'px'}">
-        <span v-show="!focused" class="fa fa-angle-left"></span>
-      </span>
-      <div class="searchWrap">
-        <search-box @focus="focusSearch" @blur="blurSearch" placeholder="搜索项目"></search-box>
-      </div>
-    </div>
-    <div ref="switchesWrap" class="switches-wrap">
-      <switches-box @switch="switchItem" :currentIndex="currentIndex"></switches-box>
-    </div>
-    <div ref="projectListsWrap" class="project-lists-wrap" :style="{'height':ListsHeight + 'px'}">
-      <div class="project-lists-change-wrap">
-        <div class="project-full-msg project" v-show="isShow(0)">
-          <ul class="project-lists">
-            <li @click="_switchEpsProject(item.project_guid)" v-for="item in projects" :key="item.project_guid" class="project-list">
-              <div class="list-wrap">
-                <div class="icon-box">
-                  <img src="./default.png" alt="">
-                </div>
-                <div class="text-box">
-                  <div class="v-text-inner title">
-                    {{ item.project_name }}
-                  </div>
-                  <div class="v-text-inner">
-                    <span>开工时间:</span>
-                    <span> {{ _formatDate(item.target_start_date, dateType) }} </span>
-                  </div>
-                  <div class="v-text-inner">
-                    <span>开工时间:</span>
-                    <span>{{ _formatDate(item.target_end_date, dateType) }}</span>
-                  </div>
-                  <div class="v-text-inner">
-                    <span>项目经理:</span>
-                    <span>{{item.Pro_manager_name}}</span>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="project-shot-msg eps" v-show="isShow(1)">
-          <ul class="project-lists">
-            <li @click="_switchEpsProject(item.project_guid)" v-for="item in EPS" :key="item.project_guid" class="project-list">
-              <div class="shot-list-wrap">
-                <span class="project-eps">{{ item.project_name }}</span>
-              </div>
-            </li>
-          </ul>
+  <transition name="slide">
+    <div class="change-project" ref="changeProject">
+      <div ref="headerChange" class="header-change">
+        <span @click="hide" class="back-icon" :style="{'width': angleWidth + 'px'}">
+          <span v-show="!focused" class="fa fa-angle-left"></span>
+        </span>
+        <div class="searchWrap">
+          <search-box placeholder="搜索项目名称"
+            v-model="searchQuery"
+            @change="searchChange"
+            @focus="focusSearch"
+            @blur="blurSearch"
+          ></search-box>
         </div>
       </div>
+      <div ref="switchesWrap" class="switches-wrap">
+        <switches-box @switch="switchItem" :currentIndex="currentIndex"></switches-box>
+      </div>
+      <div ref="projectListsWrap" class="project-lists-wrap" :style="{'height':ListsHeight + 'px'}">
+        <div class="project-lists-change-wrap">
+          <div class="project-full-msg project" v-show="isShow(0)">
+            <ul class="project-lists">
+              <li @click="_switchEpsProject(item)" v-for="item in projects" :key="item.project_guid" class="project-list">
+                <div class="list-wrap">
+                  <div class="icon-box">
+                    <img src="./default.png" alt="">
+                  </div>
+                  <div class="text-box">
+                    <div class="v-text-inner title">
+                      {{ item.project_name }}
+                    </div>
+                    <div class="v-text-inner">
+                      <span>开工时间:</span>
+                      <span> {{ _formatDate(item.target_start_date, dateType) }} </span>
+                    </div>
+                    <div class="v-text-inner">
+                      <span>开工时间:</span>
+                      <span>{{ _formatDate(item.target_end_date, dateType) }}</span>
+                    </div>
+                    <div class="v-text-inner">
+                      <span>项目经理:</span>
+                      <span>{{item.Pro_manager_name}}</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="project-shot-msg eps" v-show="isShow(1)">
+            <ul class="project-lists">
+              <li @click="_switchEpsProject(item)" v-for="item in EPS" :key="item.project_guid" class="project-list">
+                <div class="shot-list-wrap">
+                  <span class="project-eps">{{ item.project_name }}</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <loading v-model="mx_isLoading"></loading>
+      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">切换成功</toast>
+      <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
-    <loading v-model="mx_isLoading"></loading>
-    <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">切换成功</toast>
-    <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
-  </div>
+  </transition>
 </template>
 <script type="text/ecmascript-6">
+import { mapMutations } from 'vuex'
 import SearchBox from 'base/search-box/search-box.vue'
 import LineBreak from 'base/line/line.vue'
 import SwitchesBox from 'base/switches-box/switches-box.vue'
 
-import { formatDate } from 'common/js/Util.js'
+import { formatDate, searchLists } from 'common/js/Util.js'
 import { commonComponentMixin } from 'common/js/mixin.js'
 import { SwitchEpsProject, getEpsProjects } from 'api/index.js'
 
@@ -75,17 +83,20 @@ export default {
     this.getListsHeight()
 
     this.resize()
+
+    this._getEpsProjects()
   },
   data () {
     return {
       dateType: 'yyyy-MM-dd HH:mm:ss',
-      offset: 100,
       ListsHeight: 100,
       currentIndex: 0,
       projects: [],
       EPS: [],
       focused: false,
       angleWidth: 30,
+      searchQuery: '',
+      searchField: 'project_name',
       mx_isLoading: false,
       mx_message: '',
       mx_alertShow: false,
@@ -96,7 +107,7 @@ export default {
   },
   methods: {
     // 获取项目数据 进行项目和EPS分类
-    _getEpsProjects () {
+    _getEpsProjects (query) {
       this.MinXinHttpFetch(getEpsProjects(), (response) => {
         let data = response.data.value
         let projects = []
@@ -110,18 +121,37 @@ export default {
           }
         })
 
-        this.projects = projects
-        this.EPS = EPS
+        if (!query || query === '') {
+          this.projects = projects
+          this.EPS = EPS
+        } else {
+          if (this.currentIndex === 0) {
+            this.projects = searchLists(this.searchField, query, projects)
+            this.EPS = EPS
+          } else {
+            this.projects = projects
+            this.EPS = searchLists(this.searchField, query, EPS)
+          }
+        }
       })
     },
     // 选择项目
-    _switchEpsProject (ProjectGuid) {
+    _switchEpsProject (item) {
+      let ProjectGuid = item.project_guid
       this.MinXinHttpFetch(SwitchEpsProject(ProjectGuid), (response) => {
         this.mx_toastShow = true
-        this._UserSession((data) => {
-          this.$emit('switchSuccess')
-        })
+        this.setProjectInfo(item)
+        this._UserSession()
       })
+    },
+    // search start
+    searchChange (query) {
+      this.searchQuery = query
+      this.doSearchEvent()
+    },
+    // search action
+    doSearchEvent () {
+      this._getEpsProjects(this.searchQuery)
     },
     focusSearch () {
       this.focused = true
@@ -134,12 +164,7 @@ export default {
       this.angleFontSize = 30
     },
     hide () {
-      this.offset = 100
-      this.$emit('closeProjectBlock')
-    },
-    show () {
-      this.offset = 0
-      this._getEpsProjects()
+      this.$router.back()
     },
     getListsHeight () {
       this.ListsHeight =
@@ -160,7 +185,10 @@ export default {
     },
     _formatDate (time, format) {
       return formatDate(time, format)
-    }
+    },
+    ...mapMutations({
+      setProjectInfo: 'SET_PROJECTINFO'
+    })
   },
   components: {
     SearchBox,
@@ -178,8 +206,13 @@ export default {
     bottom: 0;
     z-index: 100;
     width: 100%;
-    transition: all 0.3s;
     background-color: #ffffff;
+    &.slide-enter-active, &.slide-leave-active{
+      transition: all 0.3s
+    }
+    &.slide-enter, &.slide-leave-to{
+      transform: translate3d(100%, 0, 0)
+    }
     .header-change {
       width: 100%;
       display: flex;

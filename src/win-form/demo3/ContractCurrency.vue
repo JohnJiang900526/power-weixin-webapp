@@ -63,7 +63,7 @@ import { formatDate, removeList, organizeParams } from 'common/js/Util.js'
 import { commonComponentMixin } from 'common/js/mixin.js'
 import {
   FormLoad,
-  FormSave2
+  FormSave
 } from 'api/index.js'
 
 export default {
@@ -142,7 +142,7 @@ export default {
         FormId: this.winConfig.openformid
       }
       let params = organizeParams(obj)
-      this.MinXinHttpFetch(FormSave2(params), (response) => {
+      this.MinXinHttpFetch(FormSave(params), (response) => {
         this.mx_toastText = '保存成功'
         this.mx_toastShow = true
         this.$emit('saveChildFrom')
@@ -160,7 +160,7 @@ export default {
         FormId: this.winConfig.openformid
       }
       let params = organizeParams(obj)
-      this.MinXinHttpFetch(FormSave2(params), (response) => {
+      this.MinXinHttpFetch(FormSave(params), (response) => {
         this.mx_toastText = '删除成功'
         this.mx_toastShow = true
         this.$emit('saveChildFrom')
