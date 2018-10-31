@@ -13,7 +13,7 @@
           </div>
           <div class="input-box">
             <div class="input-inner">
-              <input v-model="OldPass" type="password" placeholder="输入原密码">
+              <input v-model="OldPass" type="password" contenteditable="true" placeholder="输入原密码">
             </div>
           </div>
         </div>
@@ -23,7 +23,7 @@
           </div>
           <div class="input-box">
             <div class="input-inner">
-              <input v-model="NewPass" type="password" placeholder="输入新密码">
+              <input v-model="NewPass" type="password" contenteditable="true" :placeholder="placeholder">
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@
           </div>
           <div class="input-box">
             <div class="input-inner">
-              <input v-model="reNewPass" type="password" placeholder="重复新密码">
+              <input v-model="reNewPass" type="password" contenteditable="true" placeholder="重复新密码">
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@
 <script type="text/ecmascript-6">
 import LineBreak from 'base/line/line.vue'
 import { Loading, Alert, Toast } from 'vux'
-import { ChangePass } from 'api/index.js'
+import { ChangePass, PassRole } from 'api/index.js'
 
 const NotEqual = '新密码和重复新密码不一致'
 
@@ -69,10 +69,39 @@ export default {
       NewPass: '',
       reNewPass: '',
       toastShow: false,
-      deleyTime: 1000
+      deleyTime: 1000,
+      PassRoleObj: {},
+      placeholder: '新密码强度'
     }
   },
+  mounted () {
+    this.PassRole(() => {
+      this.placeholder = this.checkPlaceholder()
+    })
+  },
   methods: {
+    checkPlaceholder () {
+      let hasEnglish =
+        this.PassRoleObj.hasEnglish ? '包含英文字母' : ''
+      let hasNumber =
+        this.PassRoleObj.hasNumber ? ' 包含数字' : ''
+      let hasSymbol =
+        this.PassRoleObj.hasSymbol ? ' 包含字符' : ''
+      let minLength =
+        this.PassRoleObj.minLength ? ' 密码长度不少于' + this.PassRoleObj.minLength + '位' : ''
+
+      // let hasValidation = this.PassRoleObj.hasValidation
+
+      return `新密码强度:${hasEnglish}${hasNumber} ${hasSymbol}${minLength}`
+    },
+    PassRole (callback) {
+      PassRole().then((response) => {
+        this.PassRoleObj = response.data
+        if (callback) {
+          callback()
+        }
+      })
+    },
     // 修改密码
     changePass () {
       if (this.NewPass === this.reNewPass) {
@@ -139,9 +168,11 @@ export default {
     position: fixed;
     top: 0;
     bottom: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
     width: 100%;
-    background-color: #ffffff;
+    background-color: #F7F7F7;
     &.slide-enter-active, &.slide-leave-active{
       transition: all 0.3s
     }

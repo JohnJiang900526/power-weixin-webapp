@@ -26,9 +26,13 @@ export default {
   props: {
     placeholder: {
       type: String,
-      default: '搜索项目名称'
+      default: ''
     },
-    value: null
+    value: null,
+    target: {
+      type: String,
+      default: ''
+    }
   },
   data () {
     return {
@@ -59,7 +63,11 @@ export default {
       }
 
       this.timer = setTimeout(() => {
-        this.$emit('change', newQuery)
+        if (this.target !== '') {
+          this.$emit('change', newQuery, this.target)
+        } else {
+          this.$emit('change', newQuery)
+        }
       }, 400)
     }
   }

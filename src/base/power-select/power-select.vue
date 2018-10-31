@@ -4,12 +4,23 @@
     :title="title"
     :options="options"
     :disabled="disabled"
+    :readonly="readonly"
+    :required="required"
+    @picker-show="test"
     @change="change">
   </cube-select>
 </template>
 <script type="text/ecmascript-6">
 export default {
   props: {
+    readonly: {
+      type: Boolean,
+      default: false
+    },
+    required: {
+      type: Boolean,
+      default: false
+    },
     title: {
       type: String,
       default: '请选择'
@@ -41,6 +52,8 @@ export default {
     }
   },
   methods: {
+    test () {
+    },
     checkBoboxData (comboboxdata) {
       let selectName = `${this.KeyWord}.${this.field}`
       this.selectNameData = this.comboboxdata[selectName]
@@ -76,5 +89,9 @@ export default {
 </script>
 <style lang="less" rel="stylesheet/less">
   @import "~common/styles/mixin.less";
+
+  .cube-select::after, .cube-select_active::after {
+    border: 0px solid transparent!important;
+  }
 
 </style>

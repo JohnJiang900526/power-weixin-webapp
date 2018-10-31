@@ -27,9 +27,9 @@
                     <img src="./default.png" alt="">
                   </div>
                   <div class="text-box">
-                    <div class="v-text-inner title">
+                    <p class="v-text-inner title">
                       {{ item.project_name }}
-                    </div>
+                    </p>
                     <div class="v-text-inner">
                       <span>开工时间:</span>
                       <span> {{ _formatDate(item.target_start_date, dateType) }} </span>
@@ -78,6 +78,7 @@ const isProject = '1'
 const isESP = '0'
 
 export default {
+  name: 'changeproject',
   mixins: [commonComponentMixin],
   mounted () {
     this.getListsHeight()
@@ -113,7 +114,11 @@ export default {
         let projects = []
         let EPS = []
 
-        data.forEach((item, index) => {
+        let arr = [...data].filter((item) => {
+          return item
+        })
+
+        arr.forEach((item, index) => {
           if ((item.project_type + '') === isProject) {
             projects.push(item)
           } else if ((item.project_type + '') === isESP) {
@@ -201,7 +206,7 @@ export default {
   @import "~common/styles/mixin.less";
 
   .change-project {
-    position: fixed;
+    position: absolute;
     top: 0;
     bottom: 0;
     z-index: 100;
@@ -262,9 +267,9 @@ export default {
                 padding: 10px;
                 display: flex;
                 .icon-box{
-                  width: 80px;
-                  height: 80px;
-                  flex: 0 0 80px;
+                  width: 70px;
+                  height: 70px;
+                  flex: 0 0 70px;
                   img{
                     display: block;
                     width: 100%;
@@ -276,16 +281,17 @@ export default {
                   flex: 1;
                   padding-left: 10px;
                   display: flex;
+                  min-width: 10px;
                   flex-direction: column;
                   .v-text-inner{
                     flex: 1;
-                    font-size: 14px;
+                    font-size: 12px;
                     color: rgba(0, 0, 0, 0.6);
+                    padding: 3px 0;
                     &.title {
-                      font-size: 16px;
-                      color: rgba(0, 0, 0, 0.8);
-                      width: 13em;
-                      .css3-ellipsis();
+                      color: rgba(0, 0, 0, 0.9);
+                      width: 100%;
+                      // .css3-ellipsis();
                     }
                   }
                 }
@@ -298,8 +304,8 @@ export default {
           display: block;
           .shot-list-wrap {
             padding: 15px 10px;
-            font-size: 14px;
-            border-bottom: 1px solid #dddddd;
+            font-size: 13px;
+            .bottom-line();
           }
         }
       }

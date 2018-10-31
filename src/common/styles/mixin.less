@@ -85,7 +85,7 @@
   line-height: 40px;
   float: left;
   width: 35%;
-  font-size: 14px;
+  font-size: 12px;
   color: rgba(0, 0, 0, 0.5);
   padding-left: 10px;
 }
@@ -97,7 +97,7 @@
   height: 40px;
   line-height: 21px;
   margin-bottom: 0;
-  font-size: 14px;
+  font-size: 12px;
   outline-style: none;
   vertical-align: baseline;
   background-color: #FAFAFA;
@@ -134,6 +134,21 @@
   }
 }
 
+.no-bottom-line() {
+  position: relative;
+  &:after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 0px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+  }
+}
+
 .right-arrow() {
   position: relative;
   &:after {
@@ -162,3 +177,4 @@
     box-sizing: border-box;
   }
 }
+

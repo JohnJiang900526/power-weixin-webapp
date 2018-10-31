@@ -5,7 +5,7 @@
         <div v-if="picFileAttach.length > 0" class="file-attach-type">
           <h1 class="type-title">图片</h1>
           <ul class="file-attach-lists">
-            <li @click.stop.prevent="showFile(item)" v-for="item in picFileAttach" :key="item.Id" class="file-attach-list">
+            <li @click.stop.prevent="previewImage(item)" v-for="item in picFileAttach" :key="item.Id" class="file-attach-list">
               <attach-list :attachList="item"></attach-list>
             </li>
           </ul>
@@ -35,16 +35,8 @@
           </ul>
         </div>
       </form>
-      <div class="attach-action">
-        <div class="attach-action-list">
-          <span class="text">上传图片</span>
-        </div>
-        <div class="attach-action-list">
-          <span class="text">上传文档</span>
-        </div>
-        <div class="attach-action-list">
-          <span class="text">上传视频</span>
-        </div>
+      <div @click="upLoad" v-show="offset === 100" class="attach-action">
+        <x-icon type="ios-plus-empty" size="40"></x-icon>
       </div>
     </div>
 
@@ -55,7 +47,7 @@
       </div>
     </div>
     <loading v-model="mx_isLoading"></loading>
-    <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">保存成功</toast>
+    <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">{{ toastMsg }}</toast>
     <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
   </div>
 </template>
@@ -63,10 +55,24 @@
 import AttachList from 'base/attach-list/attach-list.vue'
 import { commonComponentMixin } from 'common/js/mixin.js'
 import { hostAddress } from 'common/js/Util.js'
-import { GetDocFiles } from 'api/index.js'
+import { GetDocFiles, GetJsSdk, AddImage } from 'api/index.js'
 
 export default {
   mixins: [commonComponentMixin],
+  props: {
+    loadStart: {
+      type: Boolean,
+      default: false
+    },
+    KeyWord: {
+      type: String,
+      default: ''
+    },
+    KeyValue: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
       picFileAttach: [],
@@ -75,6 +81,14 @@ export default {
       otherFileAttach: [],
       fileLink: '',
       offset: 100,
+      configInit: false,
+      imgLocalIdArray: [],
+      imgServerIdArray: [],
+      upStatusWX: false,
+      upStatus: false,
+      toastMsg: '',
+      text: '',
+      text1: '',
       mx_isLoading: false,
       mx_message: '',
       mx_alertShow: false,
@@ -86,8 +100,131 @@ export default {
   created () {
     let NODE_ENV = process.env.NODE_ENV
     this.host = hostAddress(NODE_ENV)
+
+    this.wx = this.$wechat
+  },
+  mounted () {
   },
   methods: {
+    // 预览文件  微信不支持但是开发文档中有
+    previewFile (item) {
+      let origin = location.origin
+      let address = '/PowerPlat/Control/File.ashx?action=browser&_type=ftp&_fileid='
+      let url = origin + address + item.Id
+      let size = item.FileSize ? parseInt(item.FileSize) : 1048576
+
+      try {
+        this.wx.previewFile({
+          url: url,
+          name: item.Name || '',
+          size: size
+        })
+      } catch (e) {
+        window.open(url)
+      }
+    },
+    // 预览图片
+    previewImage (item) {
+      let origin = location.origin
+      let address = '/PowerPlat/Control/File.ashx?action=browser&_type=ftp&_fileid='
+      let imgArray = []
+      let currentImg = origin + address + item.Id
+
+      this.picFileAttach.map((imgItem) => {
+        let url = origin + address + imgItem.Id
+        imgArray.push(url)
+      })
+
+      this.wx.previewImage({
+        current: currentImg,
+        urls: imgArray
+      })
+    },
+    // 获取企业微信配置信息
+    getConfig () {
+      let url = location.href.split('#')[0]
+      GetJsSdk(url).then((response) => {
+        let data = response.data
+        let config = data.data
+
+        if (data.success) {
+          config.jsApiList = config.jsApiList.concat(['previewFile'])
+          this.wx.config(config)
+          this.configInit = true
+        } else {
+          this.configInit = false
+        }
+      })
+    },
+    // 上传
+    upLoad () {
+      this.addImageFile(() => {
+        this.upLoadFileWX()
+      })
+    },
+    // 添加图片
+    addImageFile (callback) {
+      this.upStatus = false
+      this.upStatusWX = false
+
+      if (!this.configInit) {
+        this.MixinAlertShowEvent('微信配置初始化失败，请刷新重试')
+        return false
+      }
+
+      let that = this
+      this.wx.chooseImage({
+        // 可以指定来源是相册还是相机，默认二者都有
+        sourceType: ['album', 'camera'],
+        // ['original', 'compressed']可以指定是原图还是压缩图，默认二者都有
+        sizeType: ['compressed'],
+        success: function (res) {
+          that.imgLocalIdArray = res.localIds.concat()
+          if (callback) {
+            callback()
+          }
+        }
+      })
+    },
+    // 递归上传到微信服务器
+    upLoadFileWX () {
+      let that = this
+      if (this.imgLocalIdArray.length > 0) {
+        let file = this.imgLocalIdArray.shift()
+        this.wx.uploadImage({
+          localId: file,
+          isShowProgressTips: 1,
+          success: function (res) {
+            that.imgServerIdArray.push(res.serverId)
+
+            if (that.imgLocalIdArray.length === 0) {
+              that.upLoadFile()
+            } else {
+              that.upLoadFileWX()
+            }
+          }
+        })
+      }
+    },
+    // 上传到业务服务器
+    upLoadFile () {
+      let arr = this.imgServerIdArray.concat()
+      let params = {
+        imgServerIds: arr.join(','),
+        KeyValue: this.KeyValue,
+        KeyWord: this.KeyWord
+      }
+
+      this.MinXinHttpFetch(AddImage(params), (response) => {
+        this.imgServerIdArray = []
+        if (response.success) {
+          this.toastMsg = '上传成功'
+          this.mx_toastShow = true
+          this.GetDocFilesLoad(this.KeyWord, this.KeyValue)
+        }
+      })
+    },
+    // 关闭文件
     closeFile () {
       this.offset = 100
       if (this.timer) {
@@ -98,10 +235,12 @@ export default {
         this.fileLink = ''
       }, 400)
     },
+    // 打开文件
     showFile (item) {
       this.fileLink = `${this.host}/PowerPlat/FormXml/FileViewer.aspx?online=1&fileid=${item.Id}`
       this.offset = 0
     },
+    // 加载数据附件数据
     GetDocFilesLoad (KeyWord, KeyValue) {
       let params = {
         KeyWord: KeyWord,
@@ -112,6 +251,7 @@ export default {
         select: '',
         swhere: ''
       }
+
       this.MinXinHttpFetch(GetDocFiles(params), (response) => {
         let value = response.data.value
         let getData = []
@@ -119,11 +259,10 @@ export default {
           getData = JSON.parse(value)
         }
 
-        console.log(getData)
-
         this.checkFileKinds(getData)
       })
     },
+    // 文件分类
     checkFileKinds (data) {
       let picPatt = /\.(png|jpe?g|gif|svg)(\?.*)?$/
       let mediaPatt = /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/
@@ -153,6 +292,17 @@ export default {
       this.otherFileAttach = otherFileAttach
     }
   },
+  watch: {
+    loadStart: {
+      handler (newLoad, oldLoad) {
+        if (this.loadStart) {
+          this.GetDocFilesLoad(this.KeyWord, this.KeyValue)
+          this.getConfig()
+        }
+      },
+      immediate: true
+    }
+  },
   components: {
     AttachList
   }
@@ -169,7 +319,7 @@ export default {
       height: 100%;
       .file-attach-content {
         width: 100%;
-        height: calc(100% - 50px);
+        height: 100%;
         overflow-y: auto;
         .file-attach-type {
           .type-title {
@@ -185,19 +335,19 @@ export default {
         }
       }
       .attach-action {
-        width: 100%;
+        width: 50px;
         height: 50px;
-        position: relative;
-        height: auto;
-        display: flex;
-        .top-line();
-        .attach-action-list {
-          flex: 1;
-          min-width: 10px;
-          line-height: 50px;
-          text-align: center;
-          font-size: 14px;
-          color: rgba(0, 0, 0, 0.8);
+        line-height: 50px;
+        text-align: center;
+        border-radius: 50%;
+        position: absolute;
+        right: 10px;
+        bottom: 50px;
+        z-index: 200;
+        background-color: #dddddd;
+        .vux-x-icon {
+          .positionCenter();
+          fill: #295AA6;
         }
       }
     }

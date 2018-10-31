@@ -1,40 +1,18 @@
 <template>
   <div class="content-box project-center" ref="projectContent">
     <div class="scroll-wrap">
-      <cube-scroll
-        ref="formList"
-        :data="menuList"
-        :options="options"
-        @pulling-down="onPullingDown"
-      >
-        <div class="content-logo" ref="contentLogo">
-          <img class="content-bg" src="./banner.png">
-          <div class="human-message">
-            <div class="avatar">
-              <img class="header-logo" src="./default-sir.jpg" alt="头像">
-            </div>
-            <div class="project-msg-wrap">
-              <div @click="changeShow" class="project-name">
-                <span class="name">{{ projectInfo.project_name || '----' }}</span>
-                <span class="fa fa-angle-right"></span>
-              </div>
-              <div class="project-time">
-                <div class="time-list">
-                  <p>计划开工时间</p>
-                  <p>{{ _formatDate(projectInfo.target_start_date) || '----' }}</p>
-                </div>
-                <div class="time-list">
-                  <p>计划竣工时间</p>
-                  <p>{{ _formatDate(projectInfo.target_end_date) || '----' }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div ref="contentLogo">
+          <Bananer type="base" ref="Banner"></Bananer>
         </div>
-        <div class="menu-lists-content" :style="{ height: menuListsHeight + 'px' }">
+        <div class="menu-lists-content" :style="{ minHeight: menuListsHeight + 'px' }">
           <div class="menu-lists">
             <div ref="menuList" class="menu-list">
-              <div>
+              <cube-scroll
+              ref="formList"
+              :data="menuList"
+              :options="options"
+              @pulling-down="onPullingDown"
+              >
                 <h1 class="menu-title">
                   <span class="title-text">{{ menuTitle }}</span>
                 </h1>
@@ -46,11 +24,10 @@
                     <list-unit :item="returnBtn"></list-unit>
                   </li>
                 </ul>
-              </div>
+              </cube-scroll>
             </div>
           </div>
         </div>
-      </cube-scroll>
     </div>
 
     <router-view></router-view>
@@ -60,15 +37,14 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { mapGetters, mapMutations } from 'vuex'
 import ListUnit from 'base/list-unit/list-unit.vue'
-import { ProjectInfo, getMenu } from 'api/index.js'
-import { getStoreUserSession } from 'api/UserSession.js'
-
+import { getMenu } from 'api/index.js'
+import { Bananer } from 'components/index.js'
 import { commonComponentMixin } from 'common/js/mixin.js'
-import { setFontColor, getChildrenMenu, getNextHigherLevel, formatDate } from 'common/js/Util.js'
+import { setFontColor, getChildrenMenu, getNextHigherLevel } from 'common/js/Util.js'
 
 export default {
+  name: 'Project',
   mixins: [commonComponentMixin],
   data () {
     return {
@@ -101,48 +77,38 @@ export default {
         },
         scrollbar: false
       }
-    },
-    ...mapGetters([
-      'projectInfo'
-    ])
+    }
   },
   mounted () {
     this.resizeHeight()
 
     this._getMenu()
 
-    this.getProjectMsg()
+    this.isTopMenu = true
   },
   methods: {
     onPullingDown () {
       this._getMenu(() => {
-        this.getProjectMsg(() => {
-          this.$refs.formList.forceUpdate()
-        })
+        this.$refs.formList.forceUpdate()
       })
       this.isTopMenu = true
-    },
-    // 获取项目详情信息
-    getProjectMsg (callback) {
-      this.UserSession = getStoreUserSession()
-      this.MinXinHttpFetch(ProjectInfo(this.UserSession.EpsProjId), (response) => {
-        let projectInfo = response.data
-
-        this.setProjectInfo(projectInfo)
-        if (callback) {
-          callback()
-        }
-      })
     },
     // 获取菜单信息
     _getMenu (callback) {
       this.MinXinHttpFetch(getMenu(), (response) => {
-        let menu = response.data.value.concat()
-        this.menuListdefault = response.data.value.concat()
-        this.menuList = setFontColor(menu[0].children)
-        this.menuTitle = menu[0].Name
-        if (callback) {
-          callback()
+        let arr = []
+        if (response.data.value) {
+          arr = response.data.value
+        }
+        let menu = arr.concat()
+        this.menuListdefault = arr.concat()
+
+        if (menu.length > 0) {
+          this.menuList = setFontColor(menu[0].children)
+          this.menuTitle = menu[0].Name
+          if (callback) {
+            callback()
+          }
         }
       })
     },
@@ -158,8 +124,11 @@ export default {
         this.menuList = getChildrenMenu(item)
         this.menuList = setFontColor(this.menuList)
         this.isTopMenu = false
+        this.$refs.formList.forceUpdate()
       } else if (item.LinkWidget === '1') {
-        this.$router.push('/weixin/form/' + item.Id)
+        this.$router.push({
+          path: '/weixinform/' + item.Id
+        })
       }
     },
     // 返回上一级菜单
@@ -174,32 +143,30 @@ export default {
       }
       this.menuTitle = HigherLevel.title
       this.menuList = setFontColor(HigherLevel.menu)
+      this.$refs.formList.forceUpdate()
     },
     // 计算projectContent的高度
     resizeHeight () {
-      this.$nextTick(() => {
-        this.menuListsHeight =
-        this.$refs.projectContent.offsetHeight -
-        this.$refs.contentLogo.offsetHeight + 50
-      })
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+
+      this.timer = setTimeout(() => {
+        this.$nextTick(() => {
+          this.menuListsHeight =
+          this.$refs.projectContent.offsetHeight -
+          this.$refs.contentLogo.offsetHeight
+        })
+      }, 500)
 
       window.addEventListener('resize', () => {
         this.resizeHeight()
       })
-    },
-    // 打开切换项目面板
-    changeShow () {
-      this.$router.push('/weixin/project/changeproject')
-    },
-    _formatDate (time) {
-      return formatDate(time)
-    },
-    ...mapMutations({
-      setProjectInfo: 'SET_PROJECTINFO'
-    })
+    }
   },
   components: {
-    ListUnit
+    ListUnit,
+    Bananer
   }
 }
 </script>
@@ -207,7 +174,7 @@ export default {
 <style lang="less" scoped  rel="stylesheet/less">
   @import "~common/styles/mixin.less";
   .content-box{
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
@@ -218,68 +185,10 @@ export default {
       width: 100%;
       height: 100%;
       position: relative;
-      .content-logo {
-        position: relative;
-        width: 100%;
-        height: 0;
-        padding-top: 50%;
-        overflow: hidden;
-        .content-bg {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-        .human-message {
-          width: 80%;
-          position: absolute;
-          top: 10%;
-          left: 50%;
-          transform: translate(-50%, -5%);
-          .avatar {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto;
-            .header-logo{
-              display: block;
-              width: 100%;
-              height: 100%;
-              border-radius: 50%;
-            }
-          }
-          .project-msg-wrap {
-            width: 100%;
-            .project-name {
-              text-align: center;
-              color: #ffffff;
-              padding: 5px 0;
-              .fa{
-                width: 10%;
-                font-size: 18px;
-                padding-left: 10px;
-              }
-            }
-            .project-time{
-              display: flex;
-              width: 100%;
-              font-size: 14px;
-              .time-list{
-                flex: 1;
-                text-align: center;
-                color: #ffffff;
-                p{
-                  padding: 5px 0;
-                }
-              }
-            }
-          }
-        }
-      }
       .menu-lists-content{
-        padding: 10px;
+        height: auto;
+        position: relative;
         .menu-lists {
-          position: relative;
           width: 100%;
           height: 100%;
           overflow: hidden;
@@ -288,6 +197,7 @@ export default {
             top: 0;
             bottom: 0;
             width: 100%;
+            padding: 10px;
             .menu-title{
               padding: 5px;
               .title-text {
@@ -297,7 +207,6 @@ export default {
               }
             }
             .lists{
-              width: 100%;
               .clearfloat();
               .item-list{
                 margin-top: 15px;
@@ -307,7 +216,6 @@ export default {
             }
           }
         }
-
       }
     }
   }

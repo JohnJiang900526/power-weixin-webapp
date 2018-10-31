@@ -44,11 +44,11 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+    index: path.resolve(__dirname, '../dist/weixin3.0/index.html'),
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
+    assetsSubDirectory: 'weixin3.0/static',
     assetsPublicPath: '/',
 
     /**

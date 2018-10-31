@@ -11,7 +11,7 @@
         </div>
         <div class="input-box">
           <div class="input-inner">
-            <input v-model="UserInfo.PosiName" type="text" placeholder="输入职位名称">
+            <input v-model="UserInfo.PosiName" type="text" contenteditable="true" placeholder="输入职位名称">
           </div>
         </div>
       </div>
@@ -21,7 +21,7 @@
         </div>
         <div class="input-box">
           <div class="input-inner">
-            <input v-model="UserInfo.Email"  type="text" placeholder="输入邮箱">
+            <input v-model="UserInfo.Email"  type="text" contenteditable="true" placeholder="输入邮箱">
           </div>
         </div>
       </div>
@@ -31,7 +31,7 @@
         </div>
         <div class="input-box">
           <div class="input-inner">
-            <input v-model="UserInfo.QQ" type="number" placeholder="输入QQ账号">
+            <input v-model="UserInfo.QQ" type="number" contenteditable="true" placeholder="输入QQ账号">
           </div>
         </div>
       </div>
@@ -41,7 +41,7 @@
         </div>
         <div class="input-box">
           <div class="input-inner">
-            <input v-model="UserInfo.Mobile" type="number" placeholder="输入手机号">
+            <input v-model="UserInfo.Mobile" type="number" contenteditable="true" placeholder="输入手机号">
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@
         </div>
         <div class="input-box">
           <div @click="showDataPicker" class="input-inner">
-            <input v-model="UserInfo.Birthday" type="text" placeholder="输入出生日期">
+            <input v-model="UserInfo.Birthday" type="text" contenteditable="true" placeholder="输入出生日期">
           </div>
         </div>
       </div>
@@ -61,7 +61,7 @@
         </div>
         <div class="input-box">
           <div class="input-inner">
-            <input  v-model="UserInfo.Schoole" type="text" placeholder="输入毕业院校">
+            <input  v-model="UserInfo.Schoole" type="text" contenteditable="true" placeholder="输入毕业院校">
           </div>
         </div>
       </div>

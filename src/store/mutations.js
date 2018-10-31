@@ -1,20 +1,17 @@
 import * as types from './mutation-types.js'
 
 const mutations = {
-  [types.SETWINDOWCONFIG] (state, windowConfig) {
-    state.windowConfig = windowConfig
-  },
-  [types.SETFORMLISTS] (state, formLists) {
-    state.formLists = formLists
-  },
-  [types.SETCURRENTFORMCONFIG] (state, currentFormConfig) {
-    state.currentFormConfig = currentFormConfig
-  },
-  [types.SETCURRENTFORM] (state, currentForm) {
-    state.currentForm = currentForm
-  },
   [types.SETPROJECTINFO] (state, projectInfo) {
     state.projectInfo = projectInfo
+  },
+  [types.SETCURRENTMESSAGE] (state, currentMessage) {
+    state.currentMessage = currentMessage
+  },
+  [types.SETFORMSTATUS] (state, formStatus) {
+    state.formStatus = formStatus
+  },
+  [types.SETROUTERPARAMS] (state, routerParams) {
+    state.routerParams = Object.assign({}, routerParams)
   }
 }
 

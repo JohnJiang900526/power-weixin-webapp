@@ -36,8 +36,8 @@ export default {
   .list-unit {
     width: 100%;
     .font-wrap {
-      width: 60px;
-      height: 60px;
+      width: 50px;
+      height: 50px;
       margin: 0 auto;
       position: relative;
       border-radius: 50%;
@@ -51,8 +51,8 @@ export default {
       }
     }
     .text{
-      padding: 10px 0;
-      font-size: 13px;
+      padding: 10px 3px;
+      font-size: 10px;
       text-align: center;
       .css3-ellipsis();
     }

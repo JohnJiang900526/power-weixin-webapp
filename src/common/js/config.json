@@ -1,0 +1,17 @@
+{
+  "subPermission": [
+    {
+      "field": "ContractType",
+      "fieldType": "select",
+      "condition": {
+        "value": ["施工合同"],
+        "yes": {
+          "targetKeyWords": ["CHMC_SubContractListDetail"]
+        },
+        "no": {
+          "targetKeyWords": []
+        }
+      }
+    }
+  ]
+}

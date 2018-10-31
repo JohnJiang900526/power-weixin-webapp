@@ -1,6 +1,6 @@
 <template>
   <li class="tree-grid">
-    <div class="grid-line-content" :style="{backgroundColor: bgColor}">
+    <div v-if="tableType === 'default'" for="1.默认风格" class="grid-line-content" :style="{backgroundColor: bgColor}">
       <div @click.stop.prevent="toggle(item)" class="grid-item icon">
         <x-icon class="x-icon" v-show="!open && !isUnderItem" type="ios-plus-outline" size="20"></x-icon>
         <x-icon class="x-icon" v-show="open && !isUnderItem" type="ios-minus-outline" size="20"></x-icon>
@@ -11,33 +11,189 @@
         </div>
       </div>
       <div @click.stop.prevent="selectItemView(item)"
-           class="grid-item main-content"
-           :style="{paddingLeft: getPaddingLeft}"
-      >
-        <p class="title"> {{ item[title] || '暂无' }}</p>
+          class="grid-item main-content"
+          :style="{paddingLeft: getPaddingLeft}"
+        >
+        <p v-if="option.title.show" class="title">
+          {{ option.title.text ? option.title.text + ':' : '' }} {{ title }}
+        </p>
         <div class="main-content-lists">
-          <div class="list-item left">
-           {{ item[left] }}
+          <div v-if="option.left.show" class="list-item left">
+            {{ option.left.text ? option.left.text + ':' : '' }} {{ left }}
           </div>
-          <div class="list-item center">
-            {{ _formatDate(item[center]) || '暂无' }}
+          <div v-if="option.center.show" class="list-item center">
+            {{ option.center.text ? option.center.text + ':' : '' }} {{ center }}
           </div>
-          <div class="list-item right">
-            {{ item[right] || '暂无' }}
+          <div v-if="option.right.show" class="list-item right">
+            {{ option.right.text ? option.right.text + ':' : '' }} {{ right }}
           </div>
         </div>
       </div>
     </div>
+
+    <div v-if="tableType === 'contractStyle'" for="2.简约风格" class="grid-line-content" :style="{backgroundColor: bgColor}">
+      <div @click.stop.prevent="toggle(item)" class="grid-item icon">
+        <x-icon class="x-icon" v-show="!open && !isUnderItem" type="ios-plus-outline" size="20"></x-icon>
+        <x-icon class="x-icon" v-show="open && !isUnderItem" type="ios-minus-outline" size="20"></x-icon>
+      </div>
+      <div class="grid-item check-box" v-show="showCheckBox">
+        <div class="check-icon-wrap">
+          <check-icon class="check-icon" :value.sync="checked"></check-icon>
+        </div>
+      </div>
+      <div @click.stop.prevent="selectItemView(item)"
+          class="grid-item main-content"
+          :style="{paddingLeft: getPaddingLeft}"
+        >
+        <p v-if="option.title.show" class="title">
+          {{ title }}
+        </p>
+        <div class="main-content-lists">
+          <div v-if="option.left.show" class="list-item left">
+            {{ left }}
+          </div>
+          <div v-if="option.center.show" class="list-item center">
+            {{ center }}
+          </div>
+          <div v-if="option.right.show" class="list-item right">
+            {{ right }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="tableType === 'table'" for="3.table风格" class="grid-line-content" :style="{backgroundColor: bgColor}">
+      <div @click.stop.prevent="toggle(item)" class="grid-item icon">
+        <x-icon class="x-icon" v-show="!open && !isUnderItem" type="ios-plus-outline" size="20"></x-icon>
+        <x-icon class="x-icon" v-show="open && !isUnderItem" type="ios-minus-outline" size="20"></x-icon>
+      </div>
+      <div class="grid-item check-box" v-show="showCheckBox">
+        <div class="check-icon-wrap">
+          <check-icon class="check-icon" :value.sync="checked"></check-icon>
+        </div>
+      </div>
+      <div @click.stop.prevent="selectItemView(item)"
+          class="grid-item main-content"
+          :style="{paddingLeft: getPaddingLeft}"
+        >
+        <div class="main-content-lists">
+          <div v-if="option.title.show" class="list-item title">
+            {{ title }}
+          </div>
+          <div v-if="option.left.show" class="list-item left">
+            {{ left }}
+          </div>
+          <div v-if="option.center.show" class="list-item center">
+            {{ center }}
+          </div>
+          <div v-if="option.right.show" class="list-item right">
+            {{ right }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="tableType === 'beauty'" for="4.靓丽风格" class="grid-line-content beauty" :style="{backgroundColor: bgColor}">
+      <div @click.stop.prevent="toggle(item)" class="grid-item icon">
+        <x-icon class="x-icon" v-show="!open && !isUnderItem" type="ios-plus-outline" size="20"></x-icon>
+        <x-icon class="x-icon" v-show="open && !isUnderItem" type="ios-minus-outline" size="20"></x-icon>
+      </div>
+      <div class="grid-item check-box" v-show="showCheckBox">
+        <div class="check-icon-wrap">
+          <check-icon class="check-icon" :value.sync="checked"></check-icon>
+        </div>
+      </div>
+      <div @click.stop.prevent="selectItemView(item)"
+          class="grid-item main-content"
+          :style="{paddingLeft: getPaddingLeft}"
+        >
+        <p v-if="option.title.show" class="title beauty">
+          {{ option.title.text ? option.title.text + ':' : '' }} {{ title }}
+        </p>
+        <div class="main-content-lists">
+          <div v-if="option.left.show" class="list-item beauty left">
+            {{ option.left.text ? option.left.text + ':' : '' }} {{ left }}
+          </div>
+          <div v-if="option.center.show" class="list-item beauty center">
+            {{ option.center.text ? option.center.text + ':' : '' }} {{ center }}
+          </div>
+          <div v-if="option.right.show" class="list-item beauty right">
+            {{ option.right.text ? option.right.text + ':' : '' }} {{ right }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="tableType === 'luxury'" for="5.豪华风格" class="grid-line-content luxury" :style="{backgroundColor: bgColor}">
+      <div @click.stop.prevent="toggle(item)" class="grid-item icon">
+        <x-icon class="x-icon" v-show="!open && !isUnderItem" type="ios-plus-outline" size="20"></x-icon>
+        <x-icon class="x-icon" v-show="open && !isUnderItem" type="ios-minus-outline" size="20"></x-icon>
+      </div>
+      <div class="grid-item check-box" v-show="showCheckBox">
+        <div class="check-icon-wrap">
+          <check-icon class="check-icon" :value.sync="checked"></check-icon>
+        </div>
+      </div>
+      <div @click.stop.prevent="selectItemView(item)"
+          class="grid-item main-content"
+          :style="{paddingLeft: getPaddingLeft}"
+        >
+        <p v-if="option.title.show" class="title luxury">
+          {{ option.title.text ? option.title.text + ':' : '' }} {{ title }}
+        </p>
+        <div class="main-content-lists">
+          <div v-if="option.left.show" class="list-item luxury left">
+            {{ option.left.text ? option.left.text + ':' : '' }} {{ left }}
+          </div>
+          <div v-if="option.center.show" class="list-item luxury center">
+            {{ option.center.text ? option.center.text + ':' : '' }} {{ center }}
+          </div>
+          <div v-if="option.right.show" class="list-item luxury right">
+            {{ option.right.text ? option.right.text + ':' : '' }} {{ right }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="tableType === 'luxuryBeauty'" for="6.豪华简约" class="grid-line-content luxuryBeauty" :style="{backgroundColor: bgColor}">
+      <div @click.stop.prevent="toggle(item)" class="grid-item icon">
+        <x-icon class="x-icon" v-show="!open && !isUnderItem" type="ios-plus-outline" size="20"></x-icon>
+        <x-icon class="x-icon" v-show="open && !isUnderItem" type="ios-minus-outline" size="20"></x-icon>
+      </div>
+      <div class="grid-item check-box" v-show="showCheckBox">
+        <div class="check-icon-wrap">
+          <check-icon class="check-icon" :value.sync="checked"></check-icon>
+        </div>
+      </div>
+      <div @click.stop.prevent="selectItemView(item)"
+          class="grid-item main-content"
+          :style="{paddingLeft: getPaddingLeft}"
+        >
+        <p v-if="option.title.show" class="title luxuryBeauty">
+          {{ title }}
+        </p>
+        <div class="main-content-lists">
+          <div v-if="option.left.show" class="list-item luxuryBeauty left">
+             {{ left }}
+          </div>
+          <div v-if="option.center.show" class="list-item luxuryBeauty center">
+             {{ center }}
+          </div>
+          <div v-if="option.right.show" class="list-item luxuryBeauty right">
+             {{ right }}
+          </div>
+        </div>
+      </div>
+    </div>
+
     <ul v-show="open" v-if="item.children && item.children.length > 0">
       <tree-grid
         v-for="liItem in item.children" :key="liItem.Id"
         :item="liItem"
         :showCheckBox="showCheckBox"
-        :title="title"
-        :left="left"
-        :center="center"
-        :right="right"
         :levelNum="computedNum"
+        :option="option"
+        :tableType="tableType"
         @selectItemView="selectItemView"
         @selectItem="_selectItem"
         @unSelectItem="_unSelectItem"
@@ -48,7 +204,7 @@
 </template>
 <script type="text/ecmascript-6">
 import { CheckIcon } from 'vux'
-import { formatDate } from 'common/js/Util.js'
+import { formatDate, dataConversion } from 'common/js/Util.js'
 
 export default {
   name: 'treeGrid',
@@ -63,21 +219,32 @@ export default {
       type: Boolean,
       default: false
     },
-    title: {
-      type: String,
-      default: ''
+    option: {
+      type: Object,
+      default () {
+        return {
+          title: {
+            text: '',
+            show: true
+          },
+          left: {
+            text: '',
+            show: true
+          },
+          center: {
+            text: '',
+            show: true
+          },
+          right: {
+            text: '',
+            show: true
+          }
+        }
+      }
     },
-    left: {
+    tableType: {
       type: String,
-      default: ''
-    },
-    center: {
-      type: String,
-      default: ''
-    },
-    right: {
-      type: String,
-      default: ''
+      default: 'default'
     },
     levelNum: {
       type: Number,
@@ -100,8 +267,17 @@ export default {
       open: true,
       isUnderItem: false,
       checked: false,
-      num: 0
+      num: 0,
+      title: '',
+      left: '',
+      center: '',
+      right: ''
     }
+  },
+  mounted () {
+    this.timer = setTimeout(() => {
+      this.setData(this.item)
+    }, 500)
   },
   methods: {
     selectItemView (item) {
@@ -133,6 +309,41 @@ export default {
     },
     _formatDate (date) {
       return formatDate(date)
+    },
+    setData (newItem) {
+      if (this.option && this.option.title && this.option.title.field) {
+        let field = this.option.title.field
+        let type = this.option.title.type
+        this.title = dataConversion(newItem[field], type)
+      }
+      if (this.option && this.option.left && this.option.left.field) {
+        let field = this.option.left.field
+        let type = this.option.left.type
+        this.left = dataConversion(newItem[field], type)
+      }
+      if (this.option && this.option.center && this.option.center.field) {
+        let field = this.option.center.field
+        let type = this.option.center.type
+        this.center = dataConversion(newItem[field], type)
+      }
+      if (this.option && this.option.right && this.option.right.field) {
+        let field = this.option.right.field
+        let type = this.option.right.type
+        this.right = dataConversion(newItem[field], type)
+      }
+    }
+  },
+  beforeDestroy () {
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
+  },
+  watch: {
+    item: {
+      handler (newItem, oldItem) {
+        this.setData(newItem)
+      },
+      immediate: true
     }
   },
   components: {
@@ -150,6 +361,9 @@ export default {
       background-color: #ffffff;
       border-radius: 3px;
       margin-top: 5px;
+      &.luxury, &.luxuryBeauty {
+        border-left: 4px solid #64BD85;
+      }
       .grid-item {
         flex: 1;
         position: relative;
@@ -178,20 +392,27 @@ export default {
           display: block;
           .title {
             width: 100%;
-            padding: 5px 0;
+            padding: 3px 0;
             color: rgba(0, 0, 0, 0.8);
-            font-size: 14px;
+            font-size: 12px;
             .css3-ellipsis();
+            &.beauty, &.luxury, &.luxuryBeauty {
+              color: #295AA6;
+            }
           }
           .main-content-lists {
             width: 100%;
-            padding: 10px 0 5px 0;
+            padding: 5px 0 3px 0;
             display: flex;
             .list-item {
               min-width: 10px;
               flex: 1;
               color: rgba(0, 0, 0, 0.6);
-              font-size: 12px;
+              font-size: 10px;
+              .css3-ellipsis();
+              &.beauty, &.luxury, &.luxuryBeauty {
+                color: #64BD85;
+              }
               &.left {
                 text-align: left;
               }

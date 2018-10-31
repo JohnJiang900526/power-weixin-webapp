@@ -1,6 +1,6 @@
 import { systemConfig } from 'common/js/config.js'
 import { getUserSession, storeUserSession } from 'api/UserSession'
-import { Loading, Alert, Toast, XTextarea, Group, Actionsheet } from 'vux'
+import { Loading, Alert, Toast, XTextarea, Group } from 'vux'
 import { DatePicker } from 'cube-ui'
 import { formatDate } from 'common/js/Util.js'
 
@@ -80,6 +80,11 @@ export const commonComponentMixin = {
           callback(response)
         }
       })
+    },
+    beforeDestroy () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
     }
   },
   components: {
@@ -93,26 +98,10 @@ export const commonComponentMixin = {
 export const formComponentMixin = {
   data () {
     return {
-      actionMenuShow: false,
-      actionMenu: [{
-        label: '终止'
-      }, {
-        label: '撤回'
-      }, {
-        label: '委派'
-      }, {
-        label: '送审'
-      }, {
-        label: '保存',
-        value: 'SaveForm'
-      }]
+      actionMenu: []
     }
   },
   methods: {
-    // 显示showAction
-    showActionMenu () {
-      this.actionMenuShow = true
-    },
     // 日期格式化
     _formatDate (date) {
       return formatDate(date)
@@ -130,7 +119,6 @@ export const formComponentMixin = {
     FooterBar,
     XTextarea,
     Group,
-    DatePicker,
-    Actionsheet
+    DatePicker
   }
 }

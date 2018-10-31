@@ -5,7 +5,7 @@
         <cube-tab-bar
           v-model="selectedLabel"
           showSlider
-          :useTransition="disabled"
+          :useTransition="false"
           ref="tabNav"
           :data="tabLabels"
         >
@@ -14,39 +14,52 @@
 
       <div class="message-content">
         <cube-slide
-          ref="slide"
-          :loop="loop"
-          :initial-index="initialIndex"
-          :auto-play="autoPlay"
-          :show-dots="showDots"
-          :options="slideOptions"
-          @scroll="scroll"
-          @change="changePage"
-        >
+            ref="slide"
+            v-if="ready"
+            :loop="false"
+            :initial-index="initialIndex"
+            :auto-play="false"
+            :show-dots="false"
+            :options="slideOptions"
+            @scroll="scroll"
+            @change="changePage"
+          >
           <cube-slide-item>
-            <cube-scroll :data="Infos" :options="scrollOptions">
+            <cube-scroll
+                ref="Infos"
+                :data="Infos"
+                :options="scrollOptions"
+                @pulling-down="onPullingDown('Infos')"
+                @pulling-up="onPullingUp('Infos')"
+              >
               <div class="message-item info">
                 <div class="search-wrap">
-                  <search-box placeholder="搜索待处理的"></search-box>
+                  <search-box
+                    placeholder="搜索项目、标题"
+                    target="Infos"
+                    v-model="searchQuery"
+                    @change="searchFunc"
+                  ></search-box>
                 </div>
                 <ul class="message-lists">
-                  <li v-for="(item, index) in Infos" :key="index" class="message-list">
+                  <li @click="openFrom(item)" v-for="(item, index) in Infos" :key="index" class="message-list">
                     <div class="list-inner">
                       <div class="list-header">
                         <span class="fa fa-file-text-o font-color-blue"></span>
-                        <span class="title">{{ item.name }}</span>
-                        <span class="mark-tag font-color-red">
-                          {{ item.status }}
-                        </span>
+                        <span class="title">{{ item.Title }}</span>
                       </div>
                       <div class="list-body">
                         <p>
-                          <span>处理人:</span>
-                          <span>{{ item.name }}</span>
+                          <span>发起人:</span>
+                          <span>{{ item.FromHumanName }}</span>
                         </p>
                         <p>
                           <span>到达时间:</span>
-                          <span>{{ item.time }}</span>
+                          <span>{{ _FormatDate(item.wfDate) }}</span>
+                        </p>
+                        <p>
+                          <span>项目:</span>
+                          <span>{{ item.EpsProjName }}</span>
                         </p>
                       </div>
                     </div>
@@ -56,29 +69,41 @@
             </cube-scroll>
           </cube-slide-item>
           <cube-slide-item>
-            <cube-scroll :data="Actived" :options="scrollOptions">
+            <cube-scroll
+                ref="Actived"
+                :data="Actived"
+                :options="scrollOptions"
+                @pulling-down="onPullingDown('Actived')"
+                @pulling-up="onPullingUp('Actived')"
+              >
               <div class="message-item info">
                 <div class="search-wrap">
-                  <search-box placeholder="搜索我发起的"></search-box>
+                  <search-box
+                    placeholder="搜索项目、标题"
+                    target="Actived"
+                    v-model="searchQuery"
+                    @change="searchFunc"
+                  ></search-box>
                 </div>
                  <ul class="message-lists">
-                  <li v-for="(item, index) in Actived" :key="index" class="message-list">
+                  <li  @click="openFrom(item)" v-for="(item, index) in Actived" :key="index" class="message-list">
                     <div class="list-inner">
                       <div class="list-header">
                         <span class="fa fa-file-text-o font-color-blue"></span>
-                        <span class="title">{{ item.title }}</span>
-                        <span class="mark-tag font-color-purple">
-                          {{ item.status }}
-                        </span>
+                        <span class="title">{{ item.Title }}</span>
                       </div>
                       <div class="list-body">
                         <p>
-                          <span>处理人:</span>
-                          <span>{{ item.name }}</span>
+                          <span>发起人:</span>
+                          <span>{{ item.UserName }}</span>
                         </p>
                         <p>
                           <span>到达时间:</span>
-                          <span>{{ item.time }}</span>
+                          <span>{{ _FormatDate(item.wfDate) }}</span>
+                        </p>
+                        <p>
+                          <span>项目:</span>
+                          <span>{{ item.EpsProjName }}</span>
                         </p>
                       </div>
                     </div>
@@ -88,29 +113,41 @@
             </cube-scroll>
           </cube-slide-item>
           <cube-slide-item>
-            <cube-scroll :data="Join" :options="scrollOptions">
+            <cube-scroll
+                ref="Join"
+                :data="Join"
+                :options="scrollOptions"
+                @pulling-down="onPullingDown('Join')"
+                @pulling-up="onPullingUp('Join')"
+              >
               <div class="message-item info">
                 <div class="search-wrap">
-                  <search-box placeholder="搜索我参与的"></search-box>
+                  <search-box
+                    placeholder="搜索项目、标题"
+                    target="Join"
+                    v-model="searchQuery"
+                    @change="searchFunc"
+                  ></search-box>
                 </div>
                 <ul class="message-lists">
-                  <li v-for="(item, index) in Join" :key="index" class="message-list">
+                  <li  @click="openFrom(item)" v-for="(item, index) in Join" :key="index" class="message-list">
                     <div class="list-inner">
                       <div class="list-header">
                         <span class="fa fa-file-text-o font-color-blue"></span>
-                        <span class="title">{{ item.name }}</span>
-                        <span class="mark-tag font-color-red">
-                          {{ item.status }}
-                        </span>
+                        <span class="title">{{ item.Title }}</span>
                       </div>
                       <div class="list-body">
                         <p>
                           <span>处理人:</span>
-                          <span>{{ item.name }}</span>
+                          <span>{{ item.UserName }}</span>
                         </p>
                         <p>
                           <span>到达时间:</span>
-                          <span>{{ item.time }}</span>
+                          <span>{{ _FormatDate(item.wfDate) }}</span>
+                        </p>
+                        <p>
+                          <span>项目:</span>
+                          <span>{{ item.EpsProjName }}</span>
                         </p>
                       </div>
                     </div>
@@ -121,24 +158,29 @@
           </cube-slide-item>
         </cube-slide>
       </div>
-
+      <back-to></back-to>
       <loading v-model="mx_isLoading"></loading>
       <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">修改成功</toast>
       <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
+      <router-view></router-view>
     </div>
   </transition>
 </template>
 <script type="text/ecmascript-6">
-import SwitchesBox from 'base/switches-box/switches-box.vue'
-import SearchBox from 'base/search-box/search-box.vue'
-import { findIndex } from 'common/js/Util.js'
+import { SwitchesBox, SearchBox, BackTo } from 'components'
+import { findIndex, formatDate } from 'common/js/Util.js'
 import { commonComponentMixin } from 'common/js/mixin.js'
 import { MyMessageInfos } from 'api/index.js'
+import { mapMutations } from 'vuex'
 
 export default {
+  name: 'workflow',
   mixins: [commonComponentMixin],
   data () {
     return {
+      searchQuery: '',
+      ready: false,
+      WorkInfos: {},
       mx_isLoading: false,
       mx_message: '',
       mx_alertShow: false,
@@ -146,10 +188,6 @@ export default {
       mx_toastShow: false,
       mx_deleyTime: 1000,
       selectedLabel: '待处理的',
-      disabled: false,
-      loop: false,
-      autoPlay: false,
-      showDots: false,
       tabLabels: [
         {
           label: '待处理的'
@@ -168,44 +206,21 @@ export default {
         directionLockThreshold: 0
       },
       scrollOptions: {
-        directionLockThreshold: 0
+        directionLockThreshold: 0,
+        pullDownRefresh: {
+          threshold: 60,
+          txt: '刷新成功'
+        },
+        pullUpLoad: true
       },
-      Infos: (() => {
-        let arr = []
-        for (let i = 0; i < 10; i++) {
-          arr.push({
-            title: '合同登记',
-            status: ' ●待处理的',
-            name: '刘志',
-            time: '2018-08-12 12:30:10'
-          })
-        }
-        return arr
-      })(),
-      Actived: (() => {
-        let arr = []
-        for (let i = 0; i < 20; i++) {
-          arr.push({
-            title: '合同登记',
-            status: ' ●我发起的',
-            name: '刘志',
-            time: '2018-08-12 12:30:10'
-          })
-        }
-        return arr
-      })(),
-      Join: (() => {
-        let arr = []
-        for (let i = 0; i < 20; i++) {
-          arr.push({
-            title: '合同登记',
-            status: ' ●我参与的',
-            name: '刘志',
-            time: '2018-08-12 12:30:10'
-          })
-        }
-        return arr
-      })()
+      Infos: [],
+      Actived: [],
+      Join: [],
+      currentPage: {
+        Infos: 0,
+        Actived: 0,
+        Join: 0
+      }
     }
   },
   created () {
@@ -223,20 +238,141 @@ export default {
     }
   },
   mounted () {
-    this._MyMessageInfos()
+    let that = this
+    this._MyMessageInfos({
+      success (data) {
+        that.Infos = [...data.infos]
+        that.Actived = [...data.actived]
+        that.Join = [...data.join]
+      }
+    })
   },
   methods: {
+    // 下拉刷新
+    onPullingDown (type) {
+      let that = this
+      that.currentPage[type] = 0
+      that._MyMessageInfos({
+        type,
+        success (data) {
+          that[type] = [...data[type.toLowerCase()]]
+          that.$refs[type].forceUpdate()
+        }
+      })
+    },
+    // 上拉加载下一页数据
+    onPullingUp (type) {
+      let that = this
+      that.currentPage[type] += 1
+      that._MyMessageInfos({
+        type,
+        index: this.currentPage[type],
+        success (data) {
+          let newData = [...data[type.toLowerCase()]]
+
+          if (newData.length === 0) {
+            that.currentPage[type] -= 1
+          }
+
+          that[type] = that[type].concat(newData)
+          that.$refs[type].forceUpdate()
+        }
+      })
+    },
+    // 搜索
+    searchFunc (query, target) {
+      this.searchQuery = query
+
+      let that = this
+      let search = true
+      let type = target
+
+      that.currentPage[type] = 0
+      if (query === '' || !query) {
+        search = false
+      }
+
+      that._MyMessageInfos({
+        type,
+        search: search,
+        success (data) {
+          that[type] = [...data[type.toLowerCase()]]
+          that.$refs[type].forceUpdate()
+        }
+      })
+    },
+    // 打开对应的消息的表单/详情
+    openFrom (item) {
+      if (!item.KeyValue || !item.KeyWord) {
+        this.setCurrentMessage(item)
+        this.$router.push(`/showMessage/${item.Id}`)
+      } else {
+        this.$router.push(`/weixinform/${item.HtmlPath}/view/${item.KeyValue}`)
+      }
+    },
     // 获取消息
-    _MyMessageInfos () {
+    _MyMessageInfos (option) {
+      let types = this.getTypes(option.type)
       let params = Object.assign({}, {
-        types: 'infos,actived,join',
-        index: '0',
-        size: '0',
-        swhere: ''
+        types: types,
+        index: option.index || 0,
+        size: option.size || 8,
+        swhere: '1=1',
+        humanid: ''
       })
+
+      if (option.search) {
+        params.swhere += ` and (Title like '%${this.searchQuery}%' or EpsProjName like '%${this.searchQuery}%')`
+      }
+
       this.MinXinHttpFetch(MyMessageInfos(params), (response) => {
-        // console.log(response)
+        if (response.success) {
+          this.ready = true
+          if (option.success) {
+            option.success(response.data)
+          }
+        } else {
+          this.ready = false
+        }
       })
+    },
+    // 获取数据的分类
+    getTypes (type) {
+      let types = 'infos,actived,join'
+
+      if (type === 'Infos') {
+        types = 'infos'
+      } else if (type === 'Actived') {
+        types = 'actived'
+      } else if (type === 'Join') {
+        types = 'join'
+      }
+
+      return types
+    },
+    // 过滤数据
+    fliterData (query, data) {
+      let patarn = new RegExp(query, 'gi')
+      let arr = []
+
+      if (!query) {
+        return data
+      }
+
+      data.forEach((item, index) => {
+        if (
+          patarn.test(item.Title) ||
+          patarn.test(item.EpsProjName)
+        ) {
+          arr.push(item)
+        }
+      })
+
+      return arr
+    },
+    // 时间格式化
+    _FormatDate (date) {
+      return formatDate(date, 'yyyy-MM-dd HH:mm:ss')
     },
     changePage (current) {
       this.selectedLabel = this.tabLabels[current].label
@@ -260,11 +396,15 @@ export default {
     },
     switchItem (index) {
       this.currentIndex = index
-    }
+    },
+    ...mapMutations({
+      setCurrentMessage: 'SET_CURRENTMESSAGE'
+    })
   },
   components: {
     SwitchesBox,
-    SearchBox
+    SearchBox,
+    BackTo
   }
 }
 </script>
@@ -272,11 +412,15 @@ export default {
   @import "~common/styles/mixin.less";
 
   .message-box {
-    position: fixed;
+    position: absolute;
     top: 0;
     bottom: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
     width: 100%;
+    display: flex;
+    flex-direction: column;
     background-color: #F7F7F7;
     &.slide-enter-active, &.slide-leave-active {
       transition: all 0.3s;
@@ -286,7 +430,8 @@ export default {
     }
     .message-header {
       padding-bottom: 3px;
-      height: 44px;
+      min-height: 0px;
+      flex: 0 0 44px;
       .cube-tab-bar {
         .cube-tab {
           padding: 13px 0;
@@ -302,7 +447,8 @@ export default {
     }
     .message-content {
       display: block;
-      height: calc(100% - 44px);
+      min-height: 0px;
+      flex: 1;
       width: 100%;
       position: relative;
       .message-item{
@@ -327,30 +473,26 @@ export default {
             .list-inner {
               padding: 10px;
               .list-header {
-                font-size: 15px;
+                font-size: 14px;
+                white-space:normal;
+                line-height: 18px;
                 text-align: left;
                 span{
-                  display: inline-block;
                   &.fa {
                     vertical-align: top;
                   }
                   &.title {
                     color: rgba(0, 0, 0, 0.7);
-                    max-width: 13em;
-                    .css3-ellipsis();
-                  }
-                  &.mark-tag {
-                    float: right;
                   }
                 }
               }
               .list-body {
-                margin-top: 10px;
+                margin-top: 5px;
                 p {
                   text-align: left;
                   padding-top: 5px;
                   color: rgba(0, 0, 0, 0.5);
-                  font-size: 13px;
+                  font-size: 12px;
                 }
               }
             }

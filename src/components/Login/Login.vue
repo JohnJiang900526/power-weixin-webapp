@@ -11,7 +11,7 @@
         </div>
         <div class="input-box">
           <div class="input-inner">
-            <input v-model="Name" type="text" placeholder="用户名">
+            <input v-model="Name" type="text" contenteditable="true" placeholder="用户名">
           </div>
         </div>
       </div>
@@ -21,7 +21,7 @@
         </div>
         <div class="input-box">
           <div class="input-inner">
-            <input v-model="PassWord" type="password" placeholder="输入密码">
+            <input v-model="PassWord" type="password" contenteditable="true" placeholder="输入密码">
           </div>
         </div>
       </div>
@@ -36,16 +36,19 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
-import { Login } from 'api/login.js'
+import { Login, getTokenString } from 'api/login.js'
+import { getUserSession, storeUserSession } from 'api/UserSession.js'
 import { commonComponentMixin } from 'common/js/mixin.js'
+
+const debug = process.env.NODE_ENV !== 'production'
 
 export default {
   mixins: [commonComponentMixin],
   data () {
     return {
-      title: '登录',
-      Name: '',
+      Name: 'demo',
       PassWord: '',
+      weConfig: {},
       mx_isLoading: false,
       mx_message: '',
       mx_alertShow: false,
@@ -57,23 +60,66 @@ export default {
   created () {
     this.keydownEvent()
   },
+  mounted () {
+    let Token = getTokenString()
+
+    if (Token) {
+      this.$router.push('/business')
+    }
+  },
   methods: {
-    keydownEvent () {
-      document.onkeydown = (e) => {
-        var keyCode = e.keyCode
-        if (keyCode === 13) {
-          this.login()
+    // 获取UserSession
+    _getUserSession (callback) {
+      this.MinXinHttpFetch(getUserSession(), (response) => {
+        this.UserSession = response.data.value
+        storeUserSession(response.data.value)
+
+        if (callback) {
+          callback(response.data.value)
         }
+      })
+      this.isLoading = true
+    },
+    // 解绑
+    unbindKeyDown () {
+      document.removeEventListener('keydown', this.bindKeyDown)
+    },
+    // 绑定事件
+    bindKeyDown (e) {
+      var keyCode = e.keyCode
+      if (keyCode === 13) {
+        if (!this.Name) {
+          return false
+        }
+        this.login()
       }
     },
+    // 点击enter 执行提交
+    keydownEvent () {
+      document.addEventListener('keydown', this.bindKeyDown)
+    },
+    // 登录事件
     login () {
       this.MinXinHttpFetch(Login(this.Name, this.PassWord), (response) => {
-        this.$router.push('/weixin/business')
+        if (response.success) {
+          this._getUserSession((res) => {
+            let { HumanId } = res
+
+            if (debug) {
+              this.$router.push('/business')
+            } else {
+              window.open('/weixin3.0/Reg.ashx?hum=' + HumanId, '_self')
+            }
+          })
+        }
       })
     },
     alertHide () {
       this.alertShow = false
     }
+  },
+  destroyed () {
+    this.unbindKeyDown()
   }
 }
 </script>
@@ -81,7 +127,7 @@ export default {
   @import "~common/styles/mixin.less";
 
   .login-box{
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;

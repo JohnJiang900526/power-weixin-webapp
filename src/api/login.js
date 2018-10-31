@@ -21,6 +21,7 @@ export function Login (Name, PassWord) {
   params.UserCode = Name
 
   return new Promise((resolve, reject) => {
+    console.log(url)
     axios.post(url, qs.stringify(params)).then((response) => {
       if (response.data.success) {
         storageToken(response.data)

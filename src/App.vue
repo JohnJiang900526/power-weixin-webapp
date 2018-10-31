@@ -1,6 +1,6 @@
 <template>
   <div class="app" id="app">
-    <keep-alive>
+    <keep-alive :include="include">
       <router-view></router-view>
     </keep-alive>
     <div class="tab-bar-wrap">
@@ -14,6 +14,11 @@ import TabBar from 'base/TabBar/TabBar.vue'
 
 export default {
   name: 'App',
+  data () {
+    return {
+      include: 'Project,Setting'
+    }
+  },
   components: {
     TabBar
   }
@@ -30,9 +35,10 @@ export default {
     height: 100%;
   }
   .tab-bar-wrap {
-    position: fixed;
+    position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
+    z-index: 0;
   }
 </style>

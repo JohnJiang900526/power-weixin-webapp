@@ -39,6 +39,7 @@ export default {
 }
 </script>
 <style lang="less" scoped rel="stylesheet/less">
+  @import "~common/styles/mixin.less";
 
   .switches {
     display: flex;
@@ -51,6 +52,7 @@ export default {
       font-size: 14px;
       color: rgba(0, 0, 0, 0.8);
       position: relative;
+      .css3-ellipsis();
       &.active {
         color: #007ACC;
       }

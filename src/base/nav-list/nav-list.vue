@@ -52,11 +52,12 @@ export default {
     }
   },
   mounted () {
-    setTimeout(() => {
+    this.timer = setTimeout(() => {
       this._setSliderWidth()
       this._initScroll()
-    }, 20)
+    }, 200)
   },
+
   methods: {
     _setSliderWidth () {
       this.childrenNum = this.data.length
@@ -103,6 +104,11 @@ export default {
     },
     scrollToElement () {
       this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
+    }
+  },
+  beforeDestroy () {
+    if (this.timer) {
+      clearTimeout(this.timer)
     }
   },
   watch: {

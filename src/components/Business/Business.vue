@@ -1,166 +1,70 @@
 <template>
   <div ref="businessCenter" class="content-box business-center">
     <cube-sticky
-    :pos="scrollY"
-    :check-top="checkTop"
-    fixed-show-ani="sticky-fixed-show"
-    @diff-change="diffChange"
-    >
-      <cube-scroll
-      ref="BusinessScroll"
-      :scroll-events="scrollEvents"
-      @scroll="scrollHandler"
-      :options="options"
-      @pulling-down="onPullingDown"
+      :pos="scrollY"
+      :check-top="checkTop"
+      fixed-show-ani="sticky-fixed-show"
+      @diff-change="diffChange"
       >
-        <div ref="businessHeader" class="business-header">
-          <div class="content-logo">
-            <img class="content-bg" src="./banner.png">
-            <div class="human-message">
-              <div class="avatar">
-                <img class="header-logo" src="./default-sir.jpg" alt="头像">
-              </div>
-              <div class="message">
-                <p>
-                  <span>你好</span>
-                  <span class=""></span>
-                  <span>{{ UserSession.UserName || "" }}</span>
-                </p>
-                <p>
-                  <span>{{ UserSession.UserCode || "" }}</span>
-                </p>
-              </div>
-            </div>
+      <cube-scroll
+        ref="BusinessScroll"
+        :scroll-events="scrollEvents"
+        @scroll="scrollHandler"
+        :options="options"
+        @pulling-down="onPullingDown"
+        >
+        <div class="business-content">
+          <div ref="BananerWrap" class="banner-wrap">
+            <Bananer ref="Bananer"></Bananer>
           </div>
           <cube-sticky-ele>
             <div class="sticky-header">
-              <div class="switch-btn">
-                <div class="switch-list">
-                  <div @click="goToPage('workinfos')" class="text">
-                    <span>审批</span>
-                    <span v-if="Work !== 0" class="badge">{{ Work }}</span>
-                  </div>
-                </div>
-                <div @click="goToPage('messageinfos')" class="switch-list">
-                  <div class="text">
-                    <span>消息</span>
-                    <span v-if="Message !== 0" class="badge">{{ Message }}</span>
-                  </div>
-                </div>
-                <div @click="goToPage('notifyInfos')" class="switch-list">
-                  <div class="text">
-                    <span>通知</span>
-                    <span v-if="Notify !== 0" class="badge">{{ Notify }}</span>
-                  </div>
-                </div>
-              </div>
+              <SwitchBtn
+                :Message="Message"
+                :Notify="Notify"
+                :Work="Work"
+              ></SwitchBtn>
               <line-break></line-break>
             </div>
           </cube-sticky-ele>
-        </div>
-        <div ref="businessContent" class="business-content">
-          <div class="content-block">
-            <div class="block-unit">
-              <h1 class="block-title font-color-success">
-                <span class="fa fa-list-ul"></span>
-                <span>已完成的项目</span>
-              </h1>
-              <ul class="block-lists">
-                <li class="block-list" v-for="i in 5" :key="i">
-                  <div class="list-inner">
-                    <div class="list-name">
-                      柬埔寨重型机械项目
-                    </div>
-                    <div class="list-progress">
-                      100%
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="block-unit">
-              <h1 class="block-title font-color-active">
-                <span class="fa fa-road"></span>
-                <span>进行中的项目</span>
-              </h1>
-              <ul class="block-lists">
-                <li class="block-list" v-for="i in 5" :key="i">
-                  <div class="list-inner">
-                    <div class="list-name">
-                      柬埔寨重型机械项目
-                    </div>
-                    <div class="list-progress">
-                      90%
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="block-unit">
-              <h1 class="block-title font-color-danger">
-                <span class="fa fa-warning"></span>
-                <span>已逾期的项目</span>
-              </h1>
-              <ul class="block-lists">
-                <li class="block-list" v-for="i in 5" :key="i">
-                  <div class="list-inner">
-                    <div class="list-name">
-                      柬埔寨重型机械项目
-                    </div>
-                    <div class="list-progress">
-                      50%
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
+
+          <div class="doors-content">
+            <door></door>
           </div>
         </div>
       </cube-scroll>
+
       <div class="sticky-header sticky" slot="fixed" ref="stickyHeader">
-        <div class="switch-btn">
-          <div class="switch-list">
-            <div @click="goToPage('workinfos')" class="text">
-              <span>审批</span>
-              <span v-if="Work !== 0" class="badge">{{ Work }}</span>
-            </div>
-          </div>
-          <div @click="goToPage('messageinfos')" class="switch-list">
-            <div class="text">
-              <span>消息</span>
-              <span v-if="Message !== 0" class="badge">{{ Message }}</span>
-            </div>
-          </div>
-          <div @click="goToPage('notifyInfos')" class="switch-list">
-            <div class="text">
-              <span>通知</span>
-              <span v-if="Notify !== 0" class="badge">{{ Notify }}</span>
-            </div>
-          </div>
-        </div>
+        <SwitchBtn
+          ref="SwitchBtn"
+          :Message="Message"
+          :Notify="Notify"
+          :Work="Work"
+        ></SwitchBtn>
         <line-break></line-break>
       </div>
     </cube-sticky>
-
-    <router-view></router-view>
+    <div :style="{position: 'static'}">
+      <router-view></router-view>
+    </div>
     <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">修改成功</toast>
     <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
   </div>
 </template>
-
 <script type="text/ecmascript-6">
-import LineBreak from 'base/line/line.vue'
-import { getUserSession, storeUserSession } from 'api/UserSession.js'
+import { getStoreUserSession } from 'api/UserSession.js'
 import { commonComponentMixin } from 'common/js/mixin.js'
 import { MyInformCount } from 'api/index.js'
+import { LineBreak } from 'components/index.js'
+import SwitchBtn from 'base/switch-btn/switch-btn.vue'
+import Bananer from 'base/bananer/banner.vue'
+import Door from '../Doors/Door.vue'
 
 export default {
+  name: 'bussiness',
   mixins: [commonComponentMixin],
   data () {
     return {
-      title: '业务中心',
-      UserSession: {},
-      businessContent: 0,
       Message: 0,
       Notify: 0,
       Work: 0,
@@ -188,17 +92,14 @@ export default {
     }
   },
   mounted () {
-    this._getUserSession((session) => {
-      this._MyInformCount(session.HumanId)
-    })
+    this._MyInformCount()
   },
   methods: {
     onPullingDown () {
-      this._getUserSession((session) => {
-        this._MyInformCount(session.HumanId, () => {
-          this.$refs.BusinessScroll.forceUpdate()
-        })
+      this._MyInformCount(() => {
+        this.$refs.BusinessScroll.forceUpdate()
       })
+      this.$refs.Bananer.getProjectInfo()
     },
     scrollHandler ({ y }) {
       this.scrollY = -y
@@ -210,19 +111,8 @@ export default {
       }
       this.$refs.stickyHeader.style.opacity = opacity
     },
-    // 获取UserSession
-    _getUserSession (callback) {
-      this.MinXinHttpFetch(getUserSession(), (response) => {
-        this.UserSession = response.data.value
-        storeUserSession(response.data.value)
-
-        if (callback) {
-          callback(response.data.value)
-        }
-      })
-      this.isLoading = true
-    },
-    _MyInformCount (HumanId, callback) {
+    _MyInformCount (callback) {
+      let { HumanId } = getStoreUserSession()
       this.MinXinHttpFetch(MyInformCount(HumanId), (response) => {
         let data = response.data
         this.Message = data.Message
@@ -232,13 +122,13 @@ export default {
           callback()
         }
       })
-    },
-    goToPage (page) {
-      this.$router.push(`/weixin/business/${page}`)
     }
   },
   components: {
-    LineBreak
+    LineBreak,
+    Bananer,
+    SwitchBtn,
+    Door
   }
 }
 </script>
@@ -246,57 +136,14 @@ export default {
 <style lang="less" scoped  rel="stylesheet/less">
   @import "~common/styles/mixin.less";
   .content-box{
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 56px;
     z-index: 100;
-    .business-header, .sticky-header{
+    .business-content, .sticky-header{
       width: 100%;
-      .content-logo {
-        position: relative;
-        width: 100%;
-        height: 0;
-        padding-top: 50%;
-        overflow: hidden;
-        .content-bg {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
-        .human-message {
-          width: 80%;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          display: flex;
-          .avatar {
-            width: 60px;
-            height: 60px;
-            flex: 0 0 60px;
-            .header-logo{
-              display: block;
-              width: 100%;
-              height: 100%;
-              border-radius: 50%;
-            }
-          }
-          .message{
-            flex: 1;
-            font-size: 18px;
-            padding-left: 20%;
-            color: #ffffff;
-            text-align: left;
-            p {
-              line-height: 30px;
-            }
-          }
-        }
-      }
       .switch-btn{
         display: flex;
         width: 100%;
@@ -337,46 +184,6 @@ export default {
     .sticky-header {
       &.sticky {
          opacity: 0;
-      }
-    }
-    .business-content {
-      position: relative;
-      .content-block {
-        width: 100%;
-        display: block;
-        .block-unit {
-          .block-title {
-            padding: 10px;
-            font-size: 14px;
-            .bottom-line();
-          }
-          .block-lists {
-            padding: 10px 0;
-            .bottom-line();
-            .block-list {
-              .list-inner {
-                width: 100%;
-                display: flex;
-                font-size: 14px;
-                color: rgba(0, 0, 0, 0.6);
-                .list-name {
-                  flex: 1;
-                  padding: 0 10px;
-                  min-width: 10px;
-                  line-height: 30px;
-                }
-                .list-progress {
-                  flex: 0 0 50px;
-                  min-width: 10px;
-                  height: 30px;
-                  width: 50px;
-                  text-align: center;
-                  line-height: 30px;
-                }
-              }
-            }
-          }
-        }
       }
     }
   }

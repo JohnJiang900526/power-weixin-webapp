@@ -1,9 +1,8 @@
 const state = {
-  windowConfig: {},
-  formLists: [],
-  currentFormConfig: {},
-  currentForm: {},
-  projectInfo: {}
+  projectInfo: {},
+  currentMessage: {},
+  formStatus: '',
+  routerParams: {}
 }
 
 export default state

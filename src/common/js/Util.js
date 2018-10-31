@@ -1,6 +1,271 @@
 import storage from 'good-storage'
-import { systemConfig } from 'common/js/config.js'
+import {
+  systemConfig,
+  localStorageTag,
+  formActionMenuPre,
+  ECanFlowOperate
+} from 'common/js/config.js'
 import { getTokenString, getTokenMsg } from 'api/login.js'
+
+const switchsTail = {
+  fileAttach: {
+    name: '附件',
+    type: 'fileAttach'
+  },
+  report: {
+    name: '报表',
+    type: 'report'
+  },
+  comment: {
+    name: '评论',
+    type: 'comment'
+  }
+}
+// 存储微信js-sdk的config
+export function storeJSSDKConfig (value) {
+  if (value) {
+    storage.set(localStorageTag + 'JSSDK-config', value)
+  }
+}
+
+// 获取微信js-sdk的config
+export function getJSSDKConfig () {
+  let config = storage.get(localStorageTag + 'JSSDK-config')
+
+  return config
+}
+
+// create GUID
+export function createGuid () {
+  const s4 = function () {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)
+  }
+
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4()
+}
+
+// 判断表单是不是已经提交
+export function WorkflowApproved (workflowdata, status) {
+  // 1.针对的是业务不需要走流程业务的情况
+  if (!workflowdata || workflowdata === '') {
+    return false
+  }
+
+  // 2.流程结束 FlowRecordStatus.Finish 50 = 办结
+  if (workflowdata.RecordStatus && (workflowdata.RecordStatus + '') === '50') {
+    return true
+  }
+
+  // 3.状态=50,可能是手工批准的
+  if (status && (status + '') === '50') {
+    return true
+  }
+
+  return false
+}
+
+// 根据当前表单的流程信息，判断表单的操作按钮权限
+export function settingActionPermission (workflowdata, formstate, status) {
+  let btns = formActionMenuPre
+  let result = []
+  let isEdit = false
+  let approved = WorkflowApproved(workflowdata, status)
+  let sameMan = workflowdata.RecordRegHumId === workflowdata.UserID
+
+  if (
+    formstate === 'edit' ||
+    formstate === 'add') {
+    isEdit = true
+  }
+
+  for (let i = 0; i < btns.length; i++) {
+    let btn = btns[i]
+
+    if (btn.value === 'SaveForm') {
+      if (isEdit && !approved && sameMan) {
+        result.push(btn)
+      }
+    } else {
+      if (workflowdata instanceof Object) {
+        var currentResult = workflowdata.CanFlowOperate
+        var canFlowOperate = currentResult.CanFlowOperate
+        var isHasRight = (canFlowOperate & ECanFlowOperate[btn.value]) > 0
+
+        if (isHasRight && btn.enable) {
+          result.push(btn)
+        }
+      } else if (!workflowdata || workflowdata === '') {
+        break
+      }
+    }
+  }
+
+  result = result.sort((a, b) => {
+    return a.index - b.index
+  })
+
+  return result
+}
+
+// 识别子表是不是新增的
+export function checkChildTableIsAdded (foreignfield, currentItem) {
+  let isAddedItem = false
+
+  for (let key in foreignfield) {
+    if (!currentItem[key]) {
+      isAddedItem = true
+    }
+  }
+
+  return isAddedItem
+}
+// 子表新增的时候set对应的关系值
+export function setChildTableData (foreignfield, currentItem, mainformData) {
+  let obj = Object.assign({}, currentItem)
+  for (let key in foreignfield) {
+    let itemData = foreignfield[key]
+    obj[key] = mainformData[itemData]
+  }
+  return obj
+}
+
+// 获取tableType
+export function getTableType (configType) {
+  let tableType = storage.get(localStorageTag + 'tableStyle')
+  let type = 'default'
+
+  if (!configType && !tableType) {
+    type = 'default'
+  }
+  if ((!configType && tableType) || (configType && tableType)) {
+    type = tableType
+  }
+
+  if (configType && !tableType) {
+    type = configType
+  }
+
+  return type
+}
+
+// transformStatus 处理formList组件的tag数据 主要针对Status
+export function transformStatus (value, comboboxdata, keyWord, field) {
+  let itemConfigData = Object.assign({}, comboboxdata[keyWord + '.' + field])
+  let pattern = new RegExp('\'', 'g')
+
+  itemConfigData.Source = itemConfigData.Source.replace(pattern, '"')
+
+  let Source = JSON.parse(itemConfigData.Source)
+  let textField = itemConfigData.textField
+  let valueField = itemConfigData.valueField
+
+  let color = 'power-project-menu-bg7'
+  let result = ''
+
+  if (value === '0') {
+    color = 'power-project-menu-bg7'
+  } else if (value === '20') {
+    color = 'power-project-menu-bg1'
+  } else if (value === '30') {
+    color = 'power-project-menu-bg5'
+  } else if (value === '35') {
+    color = 'power-project-menu-bg5'
+  } else if (value === '40') {
+    color = 'power-project-menu-bg9'
+  } else if (value === '50') {
+    color = 'power-project-menu-bg0'
+  } else {
+    color = 'power-project-menu-bg7'
+  }
+
+  for (let i = 0; i < Source.length; i++) {
+    let item = Source[i]
+    if (item[valueField] === value) {
+      result = item[textField]
+      break
+    }
+  }
+
+  return {
+    value: result,
+    color: color
+  }
+}
+
+// 数据转换
+export function dataConversion (value, type, comboboxdata, KeyWord, field) {
+  let result = value + ''
+  if (value === null || value === undefined) {
+    return ''
+  }
+
+  switch (type) {
+    case 'number':
+      return Number(value).toFixed(2)
+    case 'percent':
+      return (Number(result) * 100).toFixed(2) + '%'
+    case 'money':
+      return toThousand(result)
+    case 'datePicker':
+      return formatDate(result)
+    case 'select':
+      return transformStatus(value, comboboxdata, KeyWord, field)
+    case 'rate':
+      let main = value.split('.')[0]
+      let tail = value.split('.')[1]
+
+      return `${toThousand(main)}.${formatNumber(tail, 8)}`
+    default:
+      return result
+  }
+}
+
+export function formatNumber (str, n) {
+  if (str === null || str === undefined) {
+    str = ''
+  }
+
+  let arr = str.split('') // 字符串拆分数组
+  let reArr = [] // 预留数组， 用来返回最终数据
+  let i = 0
+
+  // 空值处理
+  if (n === null || n === undefined) {
+    n = 4
+  }
+
+  // 主体部分 处理数据
+  while (i < n) {
+    reArr[i] = (arr[i] === null || arr[i] === undefined) ? '0' : arr[i]
+    i++
+  }
+
+  // 四舍五入处理
+  if (arr.length > n && arr[n] > 4) {
+    reArr[reArr.length - 1] = parseInt(reArr[reArr.length - 1]) + 1
+  }
+
+  return reArr.join('')
+}
+
+// 组装switchs 的数据
+export function organizeSwitchsData (switchs, config) {
+  let arr = switchs.concat()
+
+  if (config.fileAttach) {
+    arr.push(switchsTail.fileAttach)
+  }
+
+  if (config.report) {
+    arr.push(switchsTail.report)
+  }
+
+  if (config.comment) {
+    arr.push(switchsTail.comment)
+  }
+
+  return arr
+}
 
 // 退出的时候清空缓存
 export function clearStorage () {
@@ -18,13 +283,13 @@ export function redirectRoutes (Map) {
   if (Token && keepLogin) {
     obj = Object.assign({}, {
       path: '/',
-      redirect: '/weixin/business'
+      redirect: '/business'
     })
     routes.push(obj)
   } else {
     obj = Object.assign({}, {
       path: '/',
-      redirect: '/weixin/login'
+      redirect: '/login'
     })
     routes.push(obj)
   }
@@ -126,16 +391,32 @@ export function routerBeforeEach (router) {
   router.beforeEach((to, from, next) => {
     window.document.title = to.meta.title
     const Token = getTokenString()
-    const isLoginPage = to.fullPath === '/weixin/login'
+    const isLoginPage = to.fullPath === '/login'
     const TokenMsg = getTokenMsg()
     const hasLogin = checkLoginTime(TokenMsg)
 
     if (!Token && !isLoginPage && !hasLogin) {
       // 回到登录页 要清除缓存
       storage.clear()
-      next('/weixin/login')
+      next('/login')
     } else {
       next()
+    }
+
+    if (to.query.url === from.path) {
+      next('/workinfos')
+    }
+
+    switch (from.path) {
+      case '/workinfos':
+        next('/business')
+        break
+      case '/messageinfos':
+        next('/business')
+        break
+      case '/notifyInfos':
+        next('/business')
+        break
     }
   })
 }
@@ -159,14 +440,6 @@ export function isObjectValueEqual (a, b) {
   }
 
   return true
-}
-
-// 获取窗体链接中的MenuId
-export function getMenuId (router) {
-  let fullPath = router.history.current.fullPath
-  let fullArray = fullPath.replace('/weixin/form/', '').split('/')
-
-  return fullArray[0]
 }
 
 export function findIndex (ary, fn) {
@@ -230,7 +503,7 @@ export function formatFormAllConfig (formAllConfig) {
 // 返回一个主机名和端口号
 export function hostAddress (NODE_ENV) {
   const debug = NODE_ENV !== 'production'
-  let url = debug ? systemConfig.devDomainName + '/' : '/'
+  let url = debug ? systemConfig.devDomainName + '/' : location.origin
 
   return url
 }
@@ -239,10 +512,6 @@ export function hostAddress (NODE_ENV) {
 export function getFileIcon (item) {
   let imgPath = '/PowerPlat/Control/File.ashx?action=browser&_type=ftp&_fileid='
   let publicPath = '/Images/fileIcon/'
-
-  if (!item.FileExt) {
-    return publicPath + 'fileOther.png'
-  }
 
   if (/\.(png|jpe?g|gif|svg)(\?.*)?$/.test(item.FileExt)) {
     return imgPath + item.Id
@@ -256,7 +525,7 @@ export function getFileIcon (item) {
     return publicPath + 'filePdf.png'
   } else if (/\.(xls|xlsx|xlsm|xlt|xltx|xltm|csv)(\?.*)?$/.test(item.FileExt)) {
     return publicPath + 'fileExcel.png'
-  } else if (/\.(ppt|pptx|pptm|pot|potx|potm|pps|ppsx|ppsm)(\?.*)?$/.test(item.File)) {
+  } else if (/\.(ppt|pptx|pptm|pot|potx|potm|pps|ppsx|ppsm)(\?.*)?$/.test(item.FileExt)) {
     return publicPath + 'filePpt.png'
   } else {
     return publicPath + 'fileOther.png'
@@ -272,15 +541,22 @@ export function formatFromDataToView (comboboxdata, formData, keyWord) {
     let _keyWord = key.split('.')[0]
     let field = key.split('.')[1]
 
-    if (keyWord === _keyWord && obj[field]) {
+    if (!field && _keyWord === 'Status') {
+      field = _keyWord
+    }
+
+    if (obj[field]) {
       let selectItem = comboboxdata[key]
       let TextField = selectItem['TextField']
       let ValueField = selectItem['ValueField']
       let value = obj[field]
-      let dataItem = findDataItem(selectItem['Data'], value, ValueField)
+
+      let dataItem = findDataItem(selectItem['Data'], value, ValueField, TextField)
+
       obj[field] = dataItem[TextField]
     }
   }
+
   return obj
 }
 
@@ -293,12 +569,17 @@ export function formatFromDataToSave (comboboxdata, formData, keyWord) {
     let _keyWord = key.split('.')[0]
     let field = key.split('.')[1]
 
-    if (keyWord === _keyWord && obj[field]) {
+    if (!field && _keyWord === 'Status') {
+      field = _keyWord
+    }
+
+    if (obj[field]) {
       let selectItem = comboboxdata[key]
       let TextField = selectItem['TextField']
       let ValueField = selectItem['ValueField']
       let text = obj[field]
-      let dataItem = findTextItem(selectItem['Data'], text, TextField)
+      let dataItem = findTextItem(selectItem['Data'], text, TextField, ValueField)
+
       obj[field] = dataItem[ValueField]
     }
   }
@@ -322,13 +603,14 @@ export function organizeParams (objParmas) {
       objItem,
       objParmas.KeyWord
     )
-
     if (objParmas.formDate === 'edit') {
       item['_state'] = 'modified'
     } else if (objParmas.formDate === 'add') {
       item['_state'] = 'added'
     } else if (objParmas.formDate === 'delete') {
       item['_state'] = 'removed'
+    } else if (objParmas.formDate === 'view') {
+      item['_state'] = 'modified'
     }
     return item
   })
@@ -377,8 +659,177 @@ export function searchLists (searchField, query, arr) {
   return result
 }
 
+// 获取table样式的index
+export function getTableStyleIndex (style, styles) {
+  let num = 0
+  styles.forEach((item, index) => {
+    if (style === item.style) {
+      num = index
+    }
+  })
+  return num
+}
+
+// 判定switch的显示权限
+export function getTabShowRight (switchs, switchsPermission, formData, formstate, ajaxValue, subPermission) {
+  let arr = []
+  let tabs = [...switchs]
+  let field = switchsPermission.field
+  let fieldType = switchsPermission.fieldType
+  let value = ''
+  let values = switchsPermission.condition.value
+
+  if (fieldType === 'select') {
+    value = formData[field]
+  } else if (fieldType === 'ajax') {
+    value = ajaxValue
+  }
+
+  let include = values.includes(value)
+  let yes = switchsPermission.condition.yes.excludeIndex
+  let no = switchsPermission.condition.no.excludeIndex
+  let addStatus = switchsPermission.condition.addStatus.excludeIndex
+  let viewStatus = switchsPermission.condition.viewStatus.excludeIndex
+
+  for (let i = 0; i < tabs.length; i++) {
+    let item = tabs[i]
+
+    if (fieldType === 'select') {
+      if (formstate === 'edit') {
+        if (include) {
+          if (yes && !yes.includes(i)) {
+            arr.push(item)
+          }
+        } else {
+          if (no && !no.includes(i)) {
+            arr.push(item)
+          }
+        }
+      } else if (formstate === 'add') {
+        if (addStatus && !addStatus.includes(i)) {
+          arr.push(item)
+        }
+      } else if (formstate === 'view') {
+        if (viewStatus && !viewStatus.includes(i)) {
+          arr.push(item)
+        }
+      }
+    }
+
+    if (fieldType === 'ajax') {
+      if (include) {
+        if (yes && !yes.includes(i)) {
+          arr.push(item)
+        }
+      } else {
+        if (no && !no.includes(i)) {
+          arr.push(item)
+        }
+      }
+    }
+  }
+
+  if (arr.length === 0) {
+    arr = tabs
+  }
+
+  if (subPermission) {
+    try {
+      arr = [...checkSubPermission(arr, subPermission, formData)]
+    } catch (e) {
+      console.log(e)
+      arr = [...arr]
+    }
+  }
+
+  return arr
+}
+
+export function checkSubPermission (arr, subPermission, formData) {
+  let array = []
+
+  subPermission.forEach((item) => {
+    let fieldValue = formData[item.field]
+    let values = item.condition.value
+    let yes = item.condition.yes.targetKeyWords
+    let no = item.condition.no.targetKeyWords
+
+    if (values.includes(fieldValue)) {
+      arr.forEach((switchItem) => {
+        if (no && !no.includes(switchItem.KeyWord)) {
+          array.push(switchItem)
+        }
+      })
+    } else {
+      arr.forEach((switchItem) => {
+        if (yes && !yes.includes(switchItem.KeyWord)) {
+          array.push(switchItem)
+        }
+      })
+    }
+  })
+
+  return array
+}
+
+// 金额转换成千分位
+export function toThousand (money, noPoint) {
+  let parts = money.toString().split('.')
+  let main = parts[0]
+  let tail = parts[1]
+
+  main = main.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+
+  if (!tail) {
+    tail = '00'
+  } else if (tail.length === 1) {
+    tail += '0'
+  }
+
+  if (!tail) {
+    tail = ''
+  }
+
+  switch (tail.length) {
+    case 0:
+      tail += '00'
+      break
+    case 1:
+      tail += '0'
+      break
+    default:
+      tail = tail.slice(0, 2)
+  }
+
+  if (noPoint) {
+    return money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  } else {
+    return `${main}.${tail}`
+  }
+}
+
 // 在comboboxdata Text查询指定的数据
-function findTextItem (data, text, TextField) {
+function findTextItem (data, text, TextField, ValueField) {
+  let obj = {}
+  if (data.length) {
+    for (let i = 0; i < data.length; i++) {
+      let item = data[i]
+      if (item[TextField] === text) {
+        obj = item
+        break
+      }
+    }
+  }
+
+  if (obj[ValueField] === undefined || obj[ValueField] === null) {
+    obj = reFindTextItem(data, text, ValueField)
+  }
+
+  return obj
+}
+
+// 在comboboxdata Text查询指定的数据
+function reFindTextItem (data, text, TextField) {
   let obj = {}
   if (data.length) {
     for (let i = 0; i < data.length; i++) {
@@ -393,8 +844,30 @@ function findTextItem (data, text, TextField) {
 }
 
 // 在comboboxdata Data查询指定的数据
-function findDataItem (data, value, ValueField) {
+function findDataItem (data, value, ValueField, TextField) {
   let obj = {}
+
+  if (data.length) {
+    for (let i = 0; i < data.length; i++) {
+      let item = data[i]
+      if ((item[ValueField] + '') === value) {
+        obj = item
+        break
+      }
+    }
+  }
+
+  if (obj[TextField] === undefined || obj[TextField] === null) {
+    obj = reFindDataItem(data, value, TextField)
+  }
+
+  return obj
+}
+
+// 遇到不规则的数据 在comboboxdata Data查询指定的数据
+function reFindDataItem (data, value, ValueField) {
+  let obj = {}
+
   if (data.length) {
     for (let i = 0; i < data.length; i++) {
       let item = data[i]
@@ -404,6 +877,7 @@ function findDataItem (data, value, ValueField) {
       }
     }
   }
+
   return obj
 }
 

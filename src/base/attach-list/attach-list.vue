@@ -4,10 +4,13 @@
       <img v-lazy="host + getFileIconLink(attachList)" alt="">
     </div>
     <div class="list-unit title-box">
-      <p class="list-title list-unit-date"> {{ this._formatDate(attachList.UpdDate) }}</p>
+      <p class="list-title list-unit-date">
+        <span>{{ this._formatDate(attachList.UpdDate) }}</span>
+        <span class="up-load-HuName">上传人: {{ attachList.UpdHumName }}</span>
+      </p>
       <p class="list-title list-unit-title">{{ attachList.Name }}{{ attachList.FileExt }}</p>
     </div>
-    <div class="list-unit delete-box">
+    <div v-show="false" class="list-unit delete-box">
       <div v-show="false" @click.stop.prevent="deleteFile" class="close-icon">
         <x-icon type="ios-close-empty" size="30"></x-icon>
       </div>
@@ -88,6 +91,11 @@ export default {
           &.list-unit-date {
             font-size: 16px;
             .css3-ellipsis();
+            .up-load-HuName {
+              float: right;
+              padding-right: 10px;
+              font-size: 14px;
+            }
           }
           &.list-unit-title {
             font-size: 14px;

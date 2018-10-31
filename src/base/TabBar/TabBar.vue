@@ -1,19 +1,19 @@
 <template>
   <div class="tab-bar-inner">
     <div class="tab-bar">
-      <router-link to="/weixin/project" class="tab-inner">
+      <router-link to="/project" class="tab-inner">
         <span class="fa fa-bars"></span>
         <span class="text">项目中心</span>
       </router-link>
     </div>
     <div class="tab-bar">
-      <router-link to="/weixin/business" class="tab-inner">
+      <router-link to="/business" class="tab-inner">
         <span class="fa fa-home"></span>
         <span class="text">业务中心</span>
       </router-link>
     </div>
     <div class="tab-bar">
-      <router-link to="/weixin/setting" class="tab-inner">
+      <router-link to="/setting" class="tab-inner">
         <span class="fa fa-user-circle"></span>
         <span class="text">我的</span>
       </router-link>

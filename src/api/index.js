@@ -153,10 +153,11 @@ export function GridPageLoad (obj) {
 }
 
 // 执行退出
-export function LoginOut () {
+export function LoginOut (obj) {
   const API = '/Hoter/Logout'
   const params = {
-    Token: getTokenString()
+    Token: getTokenString(),
+    IsWxUnbind: obj.IsWxUnbind
   }
   return APIUnit(API, params)
 }
@@ -307,4 +308,69 @@ export function deleteFileTatch (obj) {
       reject(e)
     })
   })
+}
+
+// 提交流程数据的接口
+export function FlowAction (JsonData) {
+  const API = '/Hoter/FlowAction'
+  const params = {
+    Token: getTokenString(),
+    JsonData: JsonData
+  }
+
+  return APIUnit(API, params)
+}
+
+// 提交流程数据的接口
+export function APIMessages (JsonData) {
+  const API = '/Hoter/APIMessages'
+  const params = {
+    Token: getTokenString(),
+    JsonData: JsonData
+  }
+
+  return APIUnit(API, params)
+}
+
+// 标记消息已读
+export function AlterNotifyMsg (KeyValue) {
+  const API = '/Hoter/AlterNotifyMsg'
+  const params = {
+    Token: getTokenString(),
+    KeyValue: KeyValue || ''
+  }
+
+  return APIUnit(API, params)
+}
+
+// 获取微信js-sdk的配置信息
+export function GetJsSdk (url) {
+  return axios.get('/Weixin/GetImageJsSdk', {
+    params: {
+      url: url
+    }
+  })
+}
+
+// AddImage 微信上上传图片
+export function AddImage (obj) {
+  const API = '/Weixin/AddImage'
+  const params = {
+    imgServerIds: obj.imgServerIds,
+    KeyValue: obj.KeyValue,
+    KeyWord: obj.KeyWord
+  }
+
+  return APIUnit(API, params)
+}
+
+// 执行BO及数据集自定义方法@JsonData(Json格式的数据参数)
+export function Exec (obj) {
+  const API = '/Hoter/Exec'
+  const params = {
+    Token: getTokenString(),
+    JsonData: obj
+  }
+
+  return APIUnit(API, params)
 }
