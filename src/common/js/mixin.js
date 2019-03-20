@@ -2,7 +2,9 @@ import { systemConfig } from 'common/js/config.js'
 import { getUserSession, storeUserSession } from 'api/UserSession'
 import { Loading, Alert, Toast, XTextarea, Group } from 'vux'
 import { DatePicker } from 'cube-ui'
-import { formatDate } from 'common/js/Util.js'
+import { formatDate, checkLoginTime, clearStorage } from 'common/js/Util.js'
+import { getTokenMsg } from 'api/login.js'
+import { mapMutations } from 'vuex'
 
 import {
   NavList,
@@ -39,6 +41,23 @@ export const commonComponentMixin = {
   methods: {
     // 通用http请求方法
     MinXinHttpFetch (httpPromise, callback, isAdmin) {
+      let token = getTokenMsg()
+
+      if (token) {
+        let keepLogin = checkLoginTime(token)
+
+        if (!keepLogin) {
+          clearStorage()
+          this.$router.push('/login')
+          this.setTokenFailure(true)
+        } else {
+          this.setTokenFailure(false)
+        }
+      } else {
+        this.setTokenFailure(false)
+        this.$router.push('/login')
+      }
+
       this.mx_isLoading = true
       httpPromise.then((response) => {
         this.mx_isLoading = false
@@ -75,9 +94,11 @@ export const commonComponentMixin = {
     },
     _UserSession (callback) {
       this.MinXinHttpFetch(getUserSession(), (response) => {
-        storeUserSession(response.data.value)
-        if (callback) {
-          callback(response)
+        if (response.success) {
+          storeUserSession(response.data.value)
+          if (callback) {
+            callback(response)
+          }
         }
       })
     },
@@ -85,7 +106,10 @@ export const commonComponentMixin = {
       if (this.timer) {
         clearTimeout(this.timer)
       }
-    }
+    },
+    ...mapMutations({
+      setTokenFailure: 'TOKENFAILURE'
+    })
   },
   components: {
     Loading,

@@ -1,5 +1,5 @@
 <template>
-  <ul class="switches" :style="{'line-height': lineHeight, 'width': switcheWidth }">
+  <ul v-if="switches.length > 0" class="switches" :style="{'line-height': lineHeight, 'width': switcheWidth }">
     <li class="switch-item" @click="switchItem(index)" :key="index" v-for="(item, index) in switches" :class="{'active': currentIndex === index}">
       <span>{{item.name}}</span>
     </li>

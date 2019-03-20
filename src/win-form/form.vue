@@ -24,22 +24,23 @@
             v-if="tableItem.type === 'mainTable'"
             >
             <form class="input-textarea-group">
-              <form-row
-                v-if="tableItem.tableShowField.length > 0 && KeyWord !== ''"
-                v-for="(fieldItem, fieldIndex) in tableItem.tableShowField"
-                :key="fieldIndex"
-                :label="fieldItem.label"
-                :type="fieldItem.type"
-                :readonly="fieldItem.readonly"
-                :required="fieldItem.required"
-                :disabled="fieldItem.disabled"
-                :placeholder="fieldItem.placeholder"
-                :field="fieldItem.field"
-                :KeyWord="tableItem.KeyWord"
-                :mainformData="mainformData"
-                :comboboxdata="formAllConfig.comboboxdata || {}"
-                @enterChange="formRowChange"
-              ></form-row>
+              <div  v-if="tableItem.tableShowField.length > 0 && KeyWord !== ''">
+                 <form-row
+                  v-for="(fieldItem, fieldIndex) in tableItem.tableShowField"
+                  :key="fieldIndex"
+                  :label="fieldItem.label"
+                  :type="fieldItem.type"
+                  :readonly="fieldItem.readonly"
+                  :required="fieldItem.required"
+                  :disabled="fieldItem.disabled"
+                  :placeholder="fieldItem.placeholder"
+                  :field="fieldItem.field"
+                  :KeyWord="tableItem.KeyWord"
+                  :mainformData="mainformData"
+                  :comboboxdata="formAllConfig.comboboxdata || {}"
+                  @enterChange="formRowChange"
+                ></form-row>
+              </div>
             </form>
             <div class="form-action-wrap"
               v-if="actionMenu.length > 0"
@@ -84,7 +85,7 @@
 
             <tree-grid-child-table-customize
               v-if="tableItem.data &&
-              tableItem.style === 'treeGridCustomize'"
+              tableItem.style === 'treeGridCustomize' && hasMainFormData"
               :KeyValue="routerParams.Id"
               :formAllConfig="formAllConfig"
               :openformid="openformid"
@@ -167,6 +168,7 @@ import {
 } from 'common/js/Util.js'
 
 const DIRICTION_H = 'horizontal'
+const NOAPPCONFIGALERT = '此表单尚未加入移动端，请到PC端处理！'
 
 export default {
   name: 'h5Form',
@@ -187,6 +189,7 @@ export default {
       formAllConfig: {},
       keywordright: {},
       workflowdata: {},
+      hasMainFormData: false,
       afterSaveMsg: '',
       mx_isLoading: false,
       mx_message: '',
@@ -202,7 +205,8 @@ export default {
     },
     ...mapGetters([
       'formStatus',
-      'routerParams'
+      'routerParams',
+      'getMainFormData'
     ])
   },
   created () {
@@ -276,7 +280,6 @@ export default {
     setFormDataFromConfig (formConfigUI) {
       let switchs = formConfigUI.switchs
       let formTitle = formConfigUI.formTitle
-
       document.title = formTitle || '表单详情'
       this.switches = organizeSwitchsData(switchs, formConfigUI)
       this.tabUnitWidth = formConfigUI.tabUnitWidth
@@ -317,7 +320,7 @@ export default {
             }
           } else {
             this.$nextTick(() => {
-              this.MixinAlertShowEvent('读取不到App配置信息')
+              this.MixinAlertShowEvent(NOAPPCONFIGALERT)
             })
           }
         })
@@ -361,6 +364,8 @@ export default {
         let getData = JSON.parse(value)
         let Status = getData[statusField]
 
+        this.setMainFormData(getData)
+        this.hasMainFormData = true
         this.actionMenu = settingActionPermission(this.workflowdata, formstate, Status)
         if (value || value !== '') {
           let appconfig = this.formAllConfig.formconfig.appconfig
@@ -434,7 +439,7 @@ export default {
 
       this.MinXinHttpFetch(FormData(params), (response) => {
         let getData = response.data.value
-        let childrenData = [...getData.children]
+        let childrenData = getData.children ? [...getData.children] : []
 
         childrenData.forEach((item, index) => {
           if (!item.values) {
@@ -686,8 +691,13 @@ export default {
     },
     ...mapMutations({
       setFormStatus: 'SET_FORM_STATUS',
-      setRouterParams: 'SET_ROUTER_PARAMS'
+      setRouterParams: 'SET_ROUTER_PARAMS',
+      setMainFormData: 'SETMAINFORMdATA'
     })
+  },
+  destroyed () {
+    this.setMainFormData(null)
+    this.hasMainFormData = false
   },
   components: {
     FormRow,

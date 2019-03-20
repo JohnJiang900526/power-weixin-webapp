@@ -66,7 +66,7 @@
           <h1 class="sub-file-attach-title font-color-active">附件列表:</h1>
           <sub-file-attach
             ref="subFileAttach"
-            :KeyWord="KeyWord"
+            :KeyWord="chileTableItem.subKeyWord ? chileTableItem.subKeyWord: KeyWord"
             :KeyValue="currentItem.Id"
           ></sub-file-attach>
         </div>
@@ -316,8 +316,14 @@ export default {
         this.currentItem = item
         this.offset = 0
         let subTable = this.chileTableItem.subTable
+        let subKeyWord = this.chileTableItem.subKeyWord ? this.chileTableItem.subKeyWord : this.KeyWord
+
         if (subTable === 'withAttach') {
-          this.$refs.subFileAttach.GetDocFilesLoad(this.KeyWord, this.currentItem.Id)
+          if (subKeyWord === this.KeyWord) {
+            this.$refs.subFileAttach.GetDocFilesLoad(subKeyWord, this.currentItem.Id)
+          } else {
+            this.$refs.subFileAttach.formGridPageLoad(subKeyWord, this.currentItem.Id)
+          }
         }
 
         if (subTable === 'withCommonTable') {

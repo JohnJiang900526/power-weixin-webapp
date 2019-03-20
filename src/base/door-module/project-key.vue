@@ -7,50 +7,56 @@
     <ul class="lists">
       <li class="list-unit"
           @click="openProject(item)"
-          v-for="item in projectKeys" :key="item.id"
+          v-for="item in MajorProjects" :key="item.project_guid"
         >
         <div class="list-unit-inner">
-          <div class="list-unit-item name">{{ item.name }}</div>
+          <div class="list-unit-item name">{{ item.project_name }}</div>
+        </div>
+      </li>
+
+      <li v-if="MajorProjects.length === 0" class="list-unit">
+        <div class="list-unit-inner">
+          <div class="list-unit-item name">暂无数据</div>
         </div>
       </li>
     </ul>
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
+
 export default {
-  data () {
-    return {
-      projectKeys: [
-        {
-          id: '0',
-          name: '巴基斯坦500KV输电线路项目1'
-        },
-        {
-          id: '1',
-          name: '柬埔寨国家电网230KV西南环网输工程电项目'
-        },
-        {
-          id: '2',
-          name: '老挝230KV那帮输变电项目'
-        },
-        {
-          id: '3',
-          name: '巴基斯坦500KV输电线路项目1'
-        },
-        {
-          id: '4',
-          name: '巴基斯坦500KV输电线路项目2'
-        },
-        {
-          id: '5',
-          name: '巴基斯坦500KV输电线路项目3'
-        }
-      ]
+  props: {
+    MajorProjects: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
+    projectPortalRight: {
+      type: Boolean,
+      default: true
     }
+  },
+  computed: {
+    EpsProjId () {
+      return this.projectInfo.project_guid
+    },
+    ...mapGetters([
+      'projectInfo'
+    ])
   },
   methods: {
     openProject (item) {
-      this.$router.push('/business/projectunit')
+      if (this.projectPortalRight) {
+        let id = item.project_guid || this.EpsProjId
+        this.$router.push({
+          path: '/business/projectunit',
+          query: {
+            ProjectId: id
+          }
+        })
+      }
     }
   }
 }
@@ -84,6 +90,7 @@ export default {
           display: flex;
           .list-unit-item {
             font-size: 12px;
+            line-height: 1.5;
             min-width: 0px;
             &.name {
               flex: 3;

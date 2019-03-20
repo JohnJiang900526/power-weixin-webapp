@@ -48,6 +48,6 @@ export function getTokenMsg () {
 
     return JSON.parse(str)
   } else {
-    return {}
+    return null
   }
 }

@@ -5,13 +5,51 @@
       项目开发情况统计
     </h3>
     <ul class="lists">
-      <li class="list-unit"
-          v-for="item in statistical" :key="item.id"
-        >
+      <li class="list-unit">
         <div class="list-unit-inner">
-          <div class="list-unit-item name">{{ item.name }}</div>
-          <div class="list-unit-item num">{{ item.num }}个</div>
-          <div class="list-unit-item money">金额：{{ item.money }}元</div>
+          <div class="list-unit-item name">项目登记</div>
+          <div class="list-unit-item num">{{ xmdj.Num1 }}个</div>
+          <div class="list-unit-item money">金额：{{ xmdj.ContractAmountRMB_S1 }}元</div>
+        </div>
+      </li>
+
+      <li class="list-unit">
+        <div class="list-unit-inner">
+          <div class="list-unit-item name">开发申请</div>
+          <div class="list-unit-item num">{{ kfsq.Num2 }}个</div>
+          <div class="list-unit-item money">金额：{{ kfsq.ContractAmountRMB_S2 }}元</div>
+        </div>
+      </li>
+
+      <li class="list-unit">
+        <div class="list-unit-inner">
+          <div class="list-unit-item name">投标评审</div>
+          <div class="list-unit-item num">{{ tbps.Num3 }}个</div>
+          <div class="list-unit-item money">金额：{{ tbps.ContractAmountRMB_S3 }}元</div>
+        </div>
+      </li>
+
+      <li class="list-unit">
+        <div class="list-unit-inner">
+          <div class="list-unit-item name">主合同评审</div>
+          <div class="list-unit-item num">{{ zhtps.Num4 }}个</div>
+          <div class="list-unit-item money">金额：{{ zhtps.ContractAmountRMB_S4 }}元</div>
+        </div>
+      </li>
+
+      <li class="list-unit">
+        <div class="list-unit-inner">
+          <div class="list-unit-item name">主合同提前启动</div>
+          <div class="list-unit-item num">{{ zhttqqd.Num5 }}个</div>
+          <div class="list-unit-item money">金额：{{ zhttqqd.ContractAmountRMB_S5 }}元</div>
+        </div>
+      </li>
+
+      <li class="list-unit">
+        <div class="list-unit-inner">
+          <div class="list-unit-item name">主合同正式生效</div>
+          <div class="list-unit-item num">{{ zhtzssx.Num6 }}个</div>
+          <div class="list-unit-item money">金额：{{ zhtzssx.ContractAmountRMB_S6 }}元</div>
         </div>
       </li>
     </ul>
@@ -19,46 +57,36 @@
 </template>
 <script type="text/ecmascript-6">
 export default {
+  props: {
+    devSituation: {
+      type: Object,
+      default () {
+        return {
+          xmdj: {}, // 项目登记
+          kfsq: {}, // 开发申请
+          tbps: {}, // 投标评审
+          zhtps: {}, // 主合同评审
+          zhttqqd: {}, // 主合同提前启动
+          zhtzssx: {} // 主合同正式生效
+        }
+      }
+    }
+  },
   data () {
     return {
-      statistical: [
-        {
-          name: '项目登记',
-          id: '0',
-          num: 55,
-          money: '10000.00'
-        },
-        {
-          name: '开发申请',
-          id: '1',
-          num: 55,
-          money: '10000.00'
-        },
-        {
-          name: '投标评审',
-          id: '2',
-          num: 55,
-          money: '10000.00'
-        },
-        {
-          name: '主合同评审',
-          id: '3',
-          num: 55,
-          money: '10000.00'
-        },
-        {
-          name: '主合同提前启动',
-          id: '4',
-          num: 55,
-          money: '10000.00'
-        },
-        {
-          name: '主合同正式生效',
-          id: '5',
-          num: 55,
-          money: '10000.00'
-        }
-      ]
+      xmdj: {}, // 项目登记
+      kfsq: {}, // 开发申请
+      tbps: {}, // 投标评审
+      zhtps: {}, // 主合同评审
+      zhttqqd: {}, // 主合同提前启动
+      zhtzssx: {} // 主合同正式生效
+    }
+  },
+  methods: {
+    setData () {
+      for (let key in this.devSituation) {
+        this[key] = this.devSituation[key]
+      }
     }
   }
 }
@@ -92,16 +120,16 @@ export default {
           display: flex;
           .list-unit-item {
             font-size: 12px;
+            padding: 6px 0;
             min-width: 0px;
             &.name {
-              flex: 3;
+              flex: 6;
             }
             &.num {
               flex: 2;
-              text-align: center;
             }
             &.money {
-              flex: 5;
+              flex: 12;
             }
           }
         }

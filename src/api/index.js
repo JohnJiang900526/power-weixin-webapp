@@ -374,3 +374,35 @@ export function Exec (obj) {
 
   return APIUnit(API, params)
 }
+
+// 业务中心 门户数据
+export function DefaultPageData () {
+  const API = '/Hoter/DefaultPageData'
+  const params = {
+    Token: getTokenString()
+  }
+
+  return APIUnit(API, params)
+}
+
+// 获取项目门户中的项目详情
+export function DefaultPageProjectData (ProjectId) {
+  const API = '/Hoter/DefaultPageProjectData'
+  const params = {
+    Token: getTokenString(),
+    ProjectId: ProjectId
+  }
+
+  return APIUnit(API, params)
+}
+
+// 获取门户的查看权限数据
+export function DefaultPageProjectRight (ProjectId) {
+  const API = '/Hoter/DefaultPageProjectRight'
+  const params = {
+    Token: getTokenString(),
+    ProjectId: ProjectId
+  }
+
+  return APIUnit(API, params)
+}

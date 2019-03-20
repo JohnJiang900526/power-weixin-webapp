@@ -9,9 +9,8 @@
             </div>
           </header>
           <line-break></line-break>
-          <ul class="select-lists">
+          <ul class="select-lists" v-if="WorkFlowList.length > 0">
             <li class="select-list"
-                v-if="WorkFlowList.length > 0"
                 v-for="(item, index) in WorkFlowList"
                 @click="selectItem(index)"
                 :key="index">
@@ -294,7 +293,7 @@ export default {
         return false
       }
 
-      if (this.IsMindMustInput && this.MindInfo === '') {
+      if (this.MindInfo === '') {
         this.MixinAlertShowEvent('审批意见不许为空')
         return false
       }
@@ -767,13 +766,14 @@ export default {
   @import "~common/styles/mixin.less";
 
   .work-node-select {
-    position: fixed;
+    position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 100;
     width: 100%;
+    z-index: 100;
+    overflow-x: hidden;
     background-color: #EBEBEB;
     &.slide-enter-active, &.slide-leave-active{
       transition: all 0.3s

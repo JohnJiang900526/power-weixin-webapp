@@ -35,9 +35,8 @@
           <h1 class="title font-color-active">
             <div class="text">人员列表:</div>
           </h1>
-          <ul class="user-lists">
+          <ul class="user-lists" v-if="UserList.length > 0">
             <li class="user-list"
-              v-if="UserList.length > 0"
               v-for="(item, index) in UserList" :key="index"
               >
               <div v-if="index === 0 && !item.isBootLast" class="list-inner">
@@ -319,7 +318,9 @@ export default {
     right: 0;
     z-index: 100;
     width: 100%;
+    overflow-x: hidden;
     background-color: #EBEBEB;
+    display: flex;
     &.slide-enter-active, &.slide-leave-active{
       transition: all 0.3s
     }
@@ -327,10 +328,11 @@ export default {
       transform: translate3d(100%, 0, 0)
     }
     .flow-delegate-content {
+      flex: 1;
       width: 100%;
-      height: calc(100% - 50px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
       .delegate-method {
-        height: 160px;
         .title {
           font-size: 14px;
           padding: 10px;
@@ -408,7 +410,7 @@ export default {
               padding: 5px 10px;
               span {
                 display: inline-block;
-                width: 50px;
+                padding: 0 10px;
                 text-align: center;
               }
               .text {
@@ -434,7 +436,7 @@ export default {
       }
     }
     .flow-delegate-footer {
-      height: 50px;
+      flex: 0 0 50px;
       width: 100%;
       background-color: #ffffff;
       display: flex;

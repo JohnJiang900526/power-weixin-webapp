@@ -1,6 +1,6 @@
 <template>
   <transition name="slide">
-    <div class="project-unit">
+    <div class="project-unit" :style="{'position': position}">
       <div class="project-progress">
         <h3 class="title font-color-lightGreen">
           <span class="fa fa-bar-chart-o icon"></span>
@@ -13,7 +13,7 @@
             </cube-slide-item>
           </cube-slide>
         </div>
-        <ul class="lists">
+        <ul v-if="projectPortalRight" class="lists">
           <li class="list-unit">
             <div class="list-unit-inner">
               <div class="list-unit-item name">总工期:</div>
@@ -46,7 +46,7 @@
           </li>
         </ul>
       </div>
-      <div class="project-base">
+      <div v-if="projectPortalRight" class="project-base">
         <h3 class="title font-color-lightGreen">
           <span class="fa fa-bar-chart-o icon"></span>
           基本信息
@@ -108,7 +108,7 @@
           </li>
         </ul>
       </div>
-      <div class="project-money">
+      <div v-if="projectPortalRight" class="project-money">
         <h3 class="title font-color-lightGreen">
           <span class="fa fa-bar-chart-o icon"></span>
           项目收付款情况
@@ -140,19 +140,20 @@
           </li>
         </ul>
       </div>
-      <div class="project-compass">
+      <div v-if="projectPortalRight" class="project-compass">
         <h3 class="title font-color-lightGreen">
           <span class="fa fa-bar-chart-o icon"></span>
           项目进度罗盘
         </h3>
         <div class="compass-wrap">
-          <div id="chartCompass" :style="{height: '300px'}"></div>
+          <div id="chartCompassBlock" :style="{height: '300px'}"></div>
         </div>
       </div>
     </div>
   </transition>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
 import { DefaultPageProjectData } from 'api/index.js'
 import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/gauge'
@@ -163,6 +164,16 @@ import { hostAddress } from 'common/js/Util.js'
 const debug = process.env.NODE_ENV !== 'production'
 
 export default {
+  props: {
+    managePortalRight: {
+      type: Boolean,
+      default: true
+    },
+    projectPortalRight: {
+      type: Boolean,
+      default: true
+    }
+  },
   data () {
     return {
       host: '',
@@ -207,8 +218,8 @@ export default {
       },
       query: {},
       projectData: {},
-      Imgs: [],
       slides: [],
+      Imgs: [],
       Infos: {
         ProjectAddress: '',
         ProjectCode: '',
@@ -264,36 +275,43 @@ export default {
     let NODE_ENV = process.env.NODE_ENV
     this.host = hostAddress(NODE_ENV)
   },
-  mounted () {
-    this.drawLine()
-    this.loadData()
+  computed: {
+    position () {
+      return "static"
+    },
+    EpsProjId () {
+      return this.projectInfo.project_guid
+    },
+    ...mapGetters([
+      'projectInfo'
+    ])
   },
   methods: {
     // 加载数距
-    loadData () {
-      let { ProjectId } = this.query
+    loadData (id) {
+      DefaultPageProjectData(id).then((res) => {
+        if (this.projectPortalRight) {
+          this.drawLine()
+        }
 
-      if (ProjectId) {
-        DefaultPageProjectData(ProjectId).then((res) => {
-          if (res.success) {
-            for (let key in res.data) {
-              if (key === 'Imgs') {
-                this[key] = JSON.parse(res.data[key])
-                this.projectData[key] = JSON.parse(res.data[key])
-              } else {
-                this[key] = Object.assign({}, JSON.parse(res.data[key])[0])
-                this.projectData[key] = Object.assign({}, JSON.parse(res.data[key])[0])
-              }
+        if (res.success) {
+          for (let key in res.data) {
+            if (key === 'Imgs') {
+              this[key] = JSON.parse(res.data[key])
+              this.projectData[key] = JSON.parse(res.data[key])
+            } else {
+              this[key] = Object.assign({}, JSON.parse(res.data[key])[0])
+              this.projectData[key] = Object.assign({}, JSON.parse(res.data[key])[0])
             }
-
-            console.log(this.projectData)
           }
 
           this.slides = this.getProjectBanner(this.Imgs)
-          this.reSetChart()
-          document.title = this.Infos.ProjectName
-        })
-      }
+
+          if (this.projectPortalRight) {
+            this.reSetChart()
+          }
+        }
+      })
     },
     // 计算项目的banner图片
     getProjectBanner (imgs) {
@@ -317,8 +335,8 @@ export default {
       } else if (imgs.length > 0) {
         let imgIds = imgs[0].Remark.split('/')
         arr = imgIds.map((item) => {
-          let devUrl = `${this.host}File/Download/ftp/${item}`
-          let proUrl = `/File/Download/ftp/${item}`
+          let devUrl = `${this.host}PowerPlat/FormXml/FileViewer.aspx?online=1&fileid=${item}`
+          let proUrl = `/PowerPlat/FormXml/FileViewer.aspx?online=1&fileid=${item}`
           return {
             url: debug ? devUrl : proUrl
           }
@@ -328,10 +346,11 @@ export default {
     },
     // 画仪表盘
     drawLine () {
-      this.chart = echarts.init(document.getElementById('chartCompass'))
-      this.chart.setOption(this.chartOption)
-
-      window.addEventListener('resize', this.resize)
+      if (document.getElementById('chartCompassBlock')) {
+        this.chart = echarts.init(document.getElementById('chartCompassBlock'))
+        this.chart.setOption(this.chartOption)
+        window.addEventListener('resize', this.resize)
+      }
     },
     // 自适应视窗
     reSetChart () {
@@ -343,6 +362,11 @@ export default {
     // 自适应视窗的resize方法
     resize () {
       this.chart.resize()
+    }
+  },
+  watch: {
+    EpsProjId (a, b) {
+      this.loadData(a)
     }
   },
   destroyed () {

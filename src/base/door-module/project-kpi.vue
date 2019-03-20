@@ -10,19 +10,19 @@
           <div class="list-unit-item">
             <div class="item-block power-project-menu-bg1">
               <p class="label">当年合同收入</p>
-              <p class="value">￥72,598.62万元</p>
+              <p class="value">￥{{ keyKPI.dnhtsr.ContractAmountRMB_S01 }}万元</p>
             </div>
           </div>
           <div class="list-unit-item">
             <div class="item-block power-project-menu-bg2">
-              <p class="label">当年合同收入</p>
-              <p class="value">￥72,598.62万元</p>
+              <p class="label">当年付款</p>
+              <p class="value">￥{{ keyKPI.dnfk.ContractAmountRMB_S02 }}万元</p>
             </div>
           </div>
           <div class="list-unit-item">
             <div class="item-block power-project-menu-bg3">
-              <p class="label">当年合同收入</p>
-              <p class="value">￥72,598.62万元</p>
+              <p class="label">当年合同付款</p>
+              <p class="value">￥{{ keyKPI.dnhtfk.ContractAmountRMB_S03 }}万元</p>
             </div>
           </div>
         </div>
@@ -31,20 +31,20 @@
         <div class="list-unit-inner">
           <div class="list-unit-item">
             <div class="item-block power-project-menu-bg4">
-              <p class="label">当年合同收入</p>
-              <p class="value">￥72,598.62万元</p>
+              <p class="label">当年分包合同额</p>
+              <p class="value">￥{{ keyKPI.dnfbhte.ContractAmountRMB_S04 }}万元</p>
             </div>
           </div>
           <div class="list-unit-item">
             <div class="item-block power-project-menu-bg5">
-              <p class="label">当年合同收入</p>
-              <p class="value">￥72,598.62万元</p>
+              <p class="label">当年计划完成额</p>
+              <p class="value">￥{{ keyKPI.dnjhwce.ContractAmountRMB_S05 }}万元</p>
             </div>
           </div>
           <div class="list-unit-item">
             <div class="item-block power-project-menu-bg6">
-              <p class="label">当年合同收入</p>
-              <p class="value">￥72,598.62万元</p>
+              <p class="label">当年实际完成额</p>
+              <p class="value">￥{{ keyKPI.dnsjwce.ContractAmountRMB_S06 }}万元</p>
             </div>
           </div>
         </div>
@@ -54,8 +54,19 @@
 </template>
 <script type="text/ecmascript-6">
 export default {
-  data () {
-    return {
+  props: {
+    keyKPI: {
+      type: Object,
+      default () {
+        return {
+          dnhtsr: {}, // 当年合同收入
+          dnhtfk: {}, // 当年合同付款
+          dnfk: {}, // 当年付款
+          dnfbhte: {}, // 当年分包合同额
+          dnjhwce: {}, // 当年计划完成额
+          dnsjwce: {} // 当年实际完成额
+        }
+      }
     }
   }
 }

@@ -1,0 +1,107 @@
+.project-unit {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: #fff;
+  &.slide-enter-active, &.slide-leave-active {
+    transition: all 0.3s;
+  }
+  &.slide-enter, &.slide-leave-to {
+    transform: translate3d(100%, 0, 0)
+  }
+  .project-base, .project-progress, .project-money, .project-compass {
+    box-sizing: border-box;
+    padding: 0 3px;
+    width: 100%;
+    .title {
+      font-size: 14px;
+      padding: 10px;
+      .bottom-line();
+      .icon {
+        color: rgba(0, 0, 0, 0.7);
+      }
+    }
+    .lists {
+      padding: 10px 0;
+      .bottom-line();
+      .list-unit {
+        box-sizing: border-box;
+        padding: 7px 10px;
+        border-bottom: 1px dotted #c8c7cc;
+        &:last-child{
+          border-bottom: 1px dotted transparent;
+        }
+        .list-unit-inner {
+          display: flex;
+          .list-unit-item {
+            font-size: 12px;
+            min-width: 0px;
+            &.name {
+              flex: 1;
+              color: rgba(0, 0, 0, 0.6);
+            }
+            &.value {
+              flex: 1;
+              color: rgba(0, 0, 0, 0.8);
+            }
+          }
+        }
+      }
+    }
+  }
+  .project-progress {
+    .project-img-wrap {
+      width: 100%;
+      height: 180px;
+      overflow-x: hidden;
+      .project-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: #dddddd;
+      }
+    }
+  }
+  .project-money {
+    .lists {
+      .list-unit {
+        .list-unit-inner {
+          .list-unit-item {
+            &.name {
+              flex: 3
+            }
+            &.value {
+              flex: 2
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .project-base {
+    .lists {
+      .list-unit {
+        .list-unit-inner {
+          .list-unit-item {
+            &.name {
+              flex: 1
+            }
+            &.value {
+              flex: 3
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .cube-slide-dots .active {
+    background-color: #0E6DB0!important;
+  }
+}

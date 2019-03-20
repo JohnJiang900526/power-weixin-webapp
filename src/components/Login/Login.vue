@@ -1,33 +1,37 @@
 <template>
   <div class="login-box">
-    <div class="login-logo">
-      <img class="logo-bg" src="./login-banner.jpg">
-      <img class="logo" src="./logo.png">
-    </div>
-    <div class="inputs-warp">
-      <div class="row-input">
-        <div class="icon">
-          <span class="fa fa-user"></span>
-        </div>
-        <div class="input-box">
-          <div class="input-inner">
-            <input v-model="Name" type="text" contenteditable="true" placeholder="用户名">
+    <div class="logo-main-content">
+      <div class="login-logo">
+        <img class="logo-bg" src="./login-banner.png">
+      </div>
+      <div class="inputs-warp">
+        <div class="row-input">
+          <div class="icon">
+            <span class="fa fa-user"></span>
+          </div>
+          <div class="input-box">
+            <div class="input-inner">
+              <input v-model="Name" type="text" contenteditable="true" placeholder="用户名">
+            </div>
           </div>
         </div>
-      </div>
-      <div class="row-input">
-        <div class="icon">
-          <span class="fa fa-lock"></span>
-        </div>
-        <div class="input-box">
-          <div class="input-inner">
-            <input v-model="PassWord" type="password" contenteditable="true" placeholder="输入密码">
+        <div class="row-input">
+          <div class="icon">
+            <span class="fa fa-lock"></span>
+          </div>
+          <div class="input-box">
+            <div class="input-inner">
+              <input v-model="PassWord" type="password" contenteditable="true" placeholder="输入密码">
+            </div>
           </div>
         </div>
+
+        <div @click="login" @keyup.enter="login" class="login-btn">登录</div>
       </div>
     </div>
-    <div class="login-btn-wrap">
-      <div @click="login" @keyup.enter="login" class="login-btn">登录</div>
+
+    <div class="login-bottom">
+      <img class="bottom-logo" src="./logo.png">
     </div>
 
     <loading v-model="mx_isLoading"></loading>
@@ -46,7 +50,7 @@ export default {
   mixins: [commonComponentMixin],
   data () {
     return {
-      Name: 'demo',
+      Name: '',
       PassWord: '',
       weConfig: {},
       mx_isLoading: false,
@@ -133,74 +137,91 @@ export default {
     right: 0;
     bottom: 0;
     z-index: 100;
+    display: flex;
+    flex-direction: column;
     .baseBgColor();
-    .login-logo {
+    .logo-main-content {
+      flex: 1;
+      .login-logo {
         position: relative;
         width: 100%;
         height: 0;
-        padding-top: 50%;
+        padding-top: 65%;
         overflow: hidden;
-      .logo-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
-      .logo {
-        width: 60%;
-        position: absolute;
-        top:50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    }
-    .inputs-warp{
-      margin-top: 10px;
-      padding: 20px 10px;
-      .row-input{
-        padding: 5px;
-        margin: 20px 0;
-        border-bottom: 1px solid #ddd;
-        display: flex;
-        .icon{
-          position: relative;
-          width: 30px;
-          height: 30px;
-          flex: 0 0 30px;
-          font-size: 20px;
-          .active-status();
-          .fa{
-            position: absolute;
-            top:50%;
-            left:50%;
-            transform: translate(-50%,-50%);
+        .logo-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+        }
+        .logo-content {
+          width: 80%;
+          position: absolute;
+          top:50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          .logo-text {
+            color: #fff;
+            padding: 20px 10px;
+            font-size: 20px;
           }
         }
-        .input-box{
-          flex:1;
-          .input-inner{
-            input{
-              display: block;
-              width: calc(100% - 20px);
-              padding: 5px 10px;
-              font-size: 14px;
-              background-color: transparent;
+      }
+      .inputs-warp{
+        margin-top: 10px;
+        padding: 20px 0px;
+        .row-input{
+          width: 75%;
+          margin: 20px auto;
+          border-bottom: 1px solid #ddd;
+          display: flex;
+          .icon{
+            position: relative;
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            font-size: 20px;
+            .active-status();
+            .fa{
+              position: absolute;
+              top:50%;
+              left:50%;
+              transform: translate(-50%,-50%);
+            }
+          }
+          .input-box{
+            flex:1;
+            .input-inner{
+              input{
+                display: block;
+                width: calc(100% - 20px);
+                padding: 5px 10px;
+                font-size: 14px;
+                background-color: transparent;
+              }
             }
           }
         }
+        .login-btn{
+          width: 75%;
+          margin: 50px auto 0 auto;
+          color: #fff;
+          text-align: center;
+          padding: 5px 10px;
+          border-radius: 5px;
+          background-color: #007ACC;
+        }
       }
     }
-    .login-btn-wrap {
+    .login-bottom {
+      flex: 0 0 60px;
       width: 100%;
-      .login-btn{
-        width: 85%;
+      height: 60px;
+      .bottom-logo{
+        display: block;
+        width: 100%;
         margin: 0 auto;
-        color: #fff;
-        text-align: center;
-        padding: 10px;
-        border-radius: 5px;
-        background-color: #007ACC;
       }
     }
   }

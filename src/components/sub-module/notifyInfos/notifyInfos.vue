@@ -57,10 +57,6 @@
                           <span>到达时间:</span>
                           <span>{{ _FormatDate(item.wfDate) }}</span>
                         </p>
-                        <p>
-                          <span>项目:</span>
-                          <span>{{ item.EpsProjName }}</span>
-                        </p>
                       </div>
                     </div>
                   </li>
@@ -100,10 +96,6 @@
                         <p>
                           <span>到达时间:</span>
                           <span>{{ _FormatDate(item.wfDate) }}</span>
-                        </p>
-                        <p>
-                          <span>项目:</span>
-                          <span>{{ item.EpsProjName }}</span>
                         </p>
                       </div>
                     </div>
@@ -145,10 +137,6 @@
                           <span>到达时间:</span>
                           <span>{{ _FormatDate(item.wfDate) }}</span>
                         </p>
-                        <p>
-                          <span>项目:</span>
-                          <span>{{ item.EpsProjName }}</span>
-                        </p>
                       </div>
                     </div>
                   </li>
@@ -160,7 +148,7 @@
       </div>
       <back-to></back-to>
       <loading v-model="mx_isLoading"></loading>
-      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">修改成功</toast>
+      <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">已读</toast>
       <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
     </div>
   </transition>
@@ -169,7 +157,7 @@
 import { SwitchesBox, SearchBox, BackTo } from 'components'
 import { findIndex, formatDate } from 'common/js/Util.js'
 import { commonComponentMixin } from 'common/js/mixin.js'
-import { MyNotifyInfos } from 'api/index.js'
+import { MyNotifyInfos, AlterNotifyMsg } from 'api/index.js'
 import { mapMutations } from 'vuex'
 
 export default {
@@ -307,8 +295,32 @@ export default {
         this.setCurrentMessage(item)
         this.$router.push(`/showMessage/${item.Id}`)
       } else {
-        this.$router.push(`/weixinform/${item.HtmlPath}/view/${item.KeyValue}`)
+        this.hasRead(item, () => {
+          this.$router.push(`/weixinform/${item.HtmlPath}/view/${item.KeyValue}`)
+        })
       }
+    },
+    // 标记已读
+    hasRead (item, callback) {
+      if (!item.Id) {
+        return false
+      }
+
+      if (item.IsPowerMessage === 3) {
+        if (callback) {
+          callback()
+        }
+        return false
+      }
+
+      this.MinXinHttpFetch(AlterNotifyMsg(item.Id), (response) => {
+        if (response.success) {
+          this.mx_toastShow = true
+          if (callback) {
+            callback()
+          }
+        }
+      })
     },
     // 获取通知
     _MyNotifyInfos (option) {

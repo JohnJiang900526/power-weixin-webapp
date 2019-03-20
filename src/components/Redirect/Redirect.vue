@@ -32,7 +32,12 @@ export default {
       let { url } = query
 
       if (url) {
-        this.$router.push(url)
+        this.$router.push({
+          path: url,
+          query: {
+            flag: 'workinfos'
+          }
+        })
       } else {
         this.ShowHideEvent(ERROR)
       }

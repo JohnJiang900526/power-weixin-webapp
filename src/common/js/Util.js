@@ -214,7 +214,7 @@ export function dataConversion (value, type, comboboxdata, KeyWord, field) {
       let main = value.split('.')[0]
       let tail = value.split('.')[1]
 
-      return `${toThousand(main)}.${formatNumber(tail, 8)}`
+      return `${main}.${formatNumber(tail, 8)}`
     default:
       return result
   }
@@ -348,7 +348,13 @@ export function formatDate (time, format) {
   if (!time) {
     return ''
   }
+
+  if (typeof time === 'string') {
+    time = time.replace('T', ' ').replace(new RegExp('-', 'gm'), '/')
+  }
+
   let t = new Date(time)
+
   if (t.getTime() === 0) {
     t = new Date()
   }
@@ -403,20 +409,10 @@ export function routerBeforeEach (router) {
       next()
     }
 
-    if (to.query.url === from.path) {
-      next('/workinfos')
-    }
-
-    switch (from.path) {
-      case '/workinfos':
-        next('/business')
-        break
-      case '/messageinfos':
-        next('/business')
-        break
-      case '/notifyInfos':
-        next('/business')
-        break
+    if (from.query.flag === 'workinfos') {
+      next({
+        path: '/workinfos'
+      })
     }
   })
 }
@@ -882,11 +878,15 @@ function reFindDataItem (data, value, ValueField) {
 }
 
 // 检测是否还是持续登录的状态
-function checkLoginTime (TokenMsg) {
+export function checkLoginTime (TokenMsg) {
   let nowTime = (new Date()).getTime()
 
-  if ((nowTime - TokenMsg.exp) > 0) {
-    return true
+  if (TokenMsg) {
+    if ((nowTime - TokenMsg.exp) > 0) {
+      return true
+    } else {
+      return false
+    }
   } else {
     return false
   }

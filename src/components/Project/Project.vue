@@ -2,7 +2,7 @@
   <div class="content-box project-center" ref="projectContent">
     <div class="scroll-wrap">
         <div ref="contentLogo">
-          <Bananer type="base" ref="Banner"></Bananer>
+          <Bananer type="base" ref="Bananer"></Bananer>
         </div>
         <div class="menu-lists-content" :style="{ minHeight: menuListsHeight + 'px' }">
           <div class="menu-lists">

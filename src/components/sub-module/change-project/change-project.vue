@@ -15,7 +15,7 @@
         </div>
       </div>
       <div ref="switchesWrap" class="switches-wrap">
-        <switches-box @switch="switchItem" :currentIndex="currentIndex"></switches-box>
+        <switches-box :switches="switches" @switch="switchItem" :currentIndex="currentIndex"></switches-box>
       </div>
       <div ref="projectListsWrap" class="project-lists-wrap" :style="{'height':ListsHeight + 'px'}">
         <div class="project-lists-change-wrap">
@@ -65,7 +65,7 @@
   </transition>
 </template>
 <script type="text/ecmascript-6">
-import { mapMutations } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import SearchBox from 'base/search-box/search-box.vue'
 import LineBreak from 'base/line/line.vue'
 import SwitchesBox from 'base/switches-box/switches-box.vue'
@@ -80,18 +80,12 @@ const isESP = '0'
 export default {
   name: 'changeproject',
   mixins: [commonComponentMixin],
-  mounted () {
-    this.getListsHeight()
-
-    this.resize()
-
-    this._getEpsProjects()
-  },
   data () {
     return {
       dateType: 'yyyy-MM-dd HH:mm:ss',
       ListsHeight: 100,
       currentIndex: 0,
+      switches: [],
       projects: [],
       EPS: [],
       focused: false,
@@ -106,6 +100,18 @@ export default {
       mx_deleyTime: 1000
     }
   },
+  computed: {
+    ...mapGetters([
+      'projectInfo'
+    ])
+  },
+  mounted () {
+    this.getListsHeight()
+
+    this.resize()
+
+    this._getEpsProjects()
+  },
   methods: {
     // 获取项目数据 进行项目和EPS分类
     _getEpsProjects (query) {
@@ -115,7 +121,9 @@ export default {
         let EPS = []
 
         let arr = [...data].filter((item) => {
-          return item
+          if (item.STATE === 0 && item.EpsProjType !== 0) {
+            return item
+          }
         })
 
         arr.forEach((item, index) => {
@@ -144,9 +152,16 @@ export default {
     _switchEpsProject (item) {
       let ProjectGuid = item.project_guid
       this.MinXinHttpFetch(SwitchEpsProject(ProjectGuid), (response) => {
-        this.mx_toastShow = true
-        this.setProjectInfo(item)
-        this._UserSession()
+        if (response.success) {
+          this.mx_toastShow = true
+          this.setProjectInfo(item)
+
+          this._UserSession(() => {
+            this.timer = setTimeout(() => {
+              this.hide()
+            }, 1000)
+          })
+        }
       })
     },
     // search start
@@ -206,12 +221,14 @@ export default {
   @import "~common/styles/mixin.less";
 
   .change-project {
-    position: absolute;
+    position: fixed;
     top: 0;
     bottom: 0;
     z-index: 100;
     width: 100%;
     background-color: #ffffff;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     &.slide-enter-active, &.slide-leave-active{
       transition: all 0.3s
     }
@@ -246,7 +263,7 @@ export default {
       margin-top: 5px;
     }
     .switches-wrap {
-      border-bottom: 1px solid #dddddd;
+      border-bottom: 1px solid transparent;
     }
     .project-lists-wrap {
       width: 100%;

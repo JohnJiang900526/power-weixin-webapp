@@ -90,8 +90,6 @@ import {
   Exec
 } from 'api/index.js'
 
-import { getStoreUserSession } from 'api/UserSession.js'
-
 import FormRow from 'base/form-row/form-row.vue'
 
 export default {
@@ -134,7 +132,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'routerParams'
+      'routerParams',
+      'getMainFormData'
     ])
   },
   data () {
@@ -196,17 +195,25 @@ export default {
     },
     // 获取自定义数据
     _Exec () {
-      let userSession = getStoreUserSession()
       let tableConfig = Object.assign({}, this.chileTableItem)
       let params = Object.assign({}, tableConfig.dataParams)
       let projGuid = params.MethodParams.proj_guid
 
       if (projGuid === 'EpsProjId') {
-        params.MethodParams.proj_guid = userSession[projGuid]
+        let OwnProjId = this.getMainFormData['OwnProjId']
+        let EpsProjId = this.getMainFormData['EpsProjId']
+        let projGuid = this.getMainFormData['proj_guid']
+
+        if (projGuid) {
+          params.MethodParams.proj_guid = projGuid
+        } else {
+          params.MethodParams.proj_guid = OwnProjId === EpsProjId ? OwnProjId : EpsProjId
+        }
       }
 
       this.MinXinHttpFetch(Exec(JSON.stringify(params)), (response) => {
         let value = [...response.data.value]
+
         let treeGridAccording = tableConfig.treeGridAccording
 
         value.forEach((item, index) => {
@@ -434,6 +441,7 @@ export default {
       flex-direction: column;
       .input-textarea-group {
         min-height: 0px;
+        flex: 1;
         overflow-y: auto;
         .input-row {
           .input-row();

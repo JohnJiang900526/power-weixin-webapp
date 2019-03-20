@@ -35,7 +35,7 @@
           </ul>
         </div>
       </form>
-      <div @click="upLoad" v-show="offset === 100" class="attach-action">
+      <div v-if="isAction" @click="upLoad" v-show="offset === 100" class="attach-action">
         <x-icon type="ios-plus-empty" size="40"></x-icon>
       </div>
     </div>
@@ -52,6 +52,8 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+import { mapGetters } from 'vuex'
+import { getStoreUserSession } from 'api/UserSession.js'
 import AttachList from 'base/attach-list/attach-list.vue'
 import { commonComponentMixin } from 'common/js/mixin.js'
 import { hostAddress } from 'common/js/Util.js'
@@ -103,7 +105,31 @@ export default {
 
     this.wx = this.$wechat
   },
-  mounted () {
+  computed: {
+    ...mapGetters([
+      'getMainFormData',
+      'formStatus'
+    ]),
+    isCurrentFormRegHum () {
+      let RegHumId = ''
+      let { HumanId } = getStoreUserSession()
+      if (this.getMainFormData) {
+        RegHumId = this.getMainFormData.RegHumId
+      }
+
+      return HumanId === RegHumId
+    },
+    isAction () {
+      if (this.formStatus === 'view') {
+        if (this.isCurrentFormRegHum) {
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return true
+      }
+    }
   },
   methods: {
     // 预览文件  微信不支持但是开发文档中有
@@ -183,6 +209,9 @@ export default {
           if (callback) {
             callback()
           }
+        },
+        fail: function (res) {
+          that.MixinAlertShowEvent(res.errMsg)
         }
       })
     },

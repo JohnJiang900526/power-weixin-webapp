@@ -57,10 +57,6 @@
                           <span>到达时间:</span>
                           <span>{{ _FormatDate(item.wfDate) }}</span>
                         </p>
-                        <p>
-                          <span>项目:</span>
-                          <span>{{ item.EpsProjName }}</span>
-                        </p>
                       </div>
                     </div>
                   </li>
@@ -101,10 +97,6 @@
                           <span>到达时间:</span>
                           <span>{{ _FormatDate(item.wfDate) }}</span>
                         </p>
-                        <p>
-                          <span>项目:</span>
-                          <span>{{ item.EpsProjName }}</span>
-                        </p>
                       </div>
                     </div>
                   </li>
@@ -144,10 +136,6 @@
                         <p>
                           <span>到达时间:</span>
                           <span>{{ _FormatDate(item.wfDate) }}</span>
-                        </p>
-                        <p>
-                          <span>项目:</span>
-                          <span>{{ item.EpsProjName }}</span>
                         </p>
                       </div>
                     </div>

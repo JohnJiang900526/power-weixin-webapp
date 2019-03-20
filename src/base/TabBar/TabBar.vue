@@ -1,6 +1,6 @@
 <template>
   <div class="tab-bar-inner">
-    <div class="tab-bar">
+    <div v-if="isShow" class="tab-bar">
       <router-link to="/project" class="tab-inner">
         <span class="fa fa-bars"></span>
         <span class="text">项目中心</span>
@@ -21,6 +21,14 @@
   </div>
 </template>
 <script type="text/ecmascript-6">
+const debug = process.env.NODE_ENV !== 'production'
+export default {
+  data () {
+    return {
+      isShow: debug
+    }
+  }
+}
 </script>
 <style lang="less" scoped  rel="stylesheet/less">
   .tab-bar-inner {

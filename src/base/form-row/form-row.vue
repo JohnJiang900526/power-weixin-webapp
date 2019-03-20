@@ -193,7 +193,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default: '请输入'
+      default: ''
     },
     comboboxdata: {
       type: Object,
@@ -319,7 +319,8 @@ export default {
         }
 
         if (this.type === 'money') {
-          item.value = newRowValue.replace(',', '')
+          let pattern = new RegExp(',', 'gm')
+          item.value = newRowValue.replace(pattern, '')
         }
 
         if (this.type === 'percent') {

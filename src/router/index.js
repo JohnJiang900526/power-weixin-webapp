@@ -48,14 +48,6 @@ let routesMap = [
     component: project
   },
   {
-    path: '/changeproject',
-    name: 'changeProject',
-    meta: {
-      title: '选择项目'
-    },
-    component: ChangeProject
-  },
-  {
     path: '/business',
     name: 'business',
     meta: {
@@ -70,6 +62,14 @@ let routesMap = [
           title: '项目详情'
         },
         component: projectUnit
+      },
+      {
+        path: '/changeproject',
+        name: 'changeProject',
+        meta: {
+          title: '选择项目'
+        },
+        component: ChangeProject
       }
     ]
   },

@@ -15,7 +15,7 @@
         >
         <div class="business-content">
           <div ref="BananerWrap" class="banner-wrap">
-            <Bananer ref="Bananer"></Bananer>
+            <Bananer ref="Banner"></Bananer>
           </div>
           <cube-sticky-ele>
             <div class="sticky-header">
@@ -29,7 +29,7 @@
           </cube-sticky-ele>
 
           <div class="doors-content">
-            <door></door>
+            <door ref="Door"></door>
           </div>
         </div>
       </cube-scroll>
@@ -47,6 +47,8 @@
     <div :style="{position: 'static'}">
       <router-view></router-view>
     </div>
+
+    <loading v-model="mx_isLoading"></loading>
     <toast v-model="mx_toastShow" type="text" :time="mx_deleyTime">修改成功</toast>
     <alert v-model="mx_alertShow" @on-hide="MixinAlertHideEvent" :title="mx_alertTitle" :content="mx_message"></alert>
   </div>
@@ -98,8 +100,10 @@ export default {
     onPullingDown () {
       this._MyInformCount(() => {
         this.$refs.BusinessScroll.forceUpdate()
+        this.$refs.Door.getDoorRight()
       })
-      this.$refs.Bananer.getProjectInfo()
+
+      this.$refs.Banner.getProjectInfo()
     },
     scrollHandler ({ y }) {
       this.scrollY = -y

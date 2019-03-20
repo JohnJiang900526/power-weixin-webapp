@@ -1,6 +1,7 @@
 // 系统配置
 export const systemConfig = {
-  devDomainName: 'http://zj.goodr.cn:8482',
+  devDomainName: 'http://pm.chmc.ltd:8482',
+  // 重机 http://pm.chmc.ltd:8482
   // 吴石磊 http://192.168.55.105:8053
   // 重机测试服务器 http://zj.goodr.cn:8482  admin CHMC123chmc | passw0rd123
   // 北京服务器 http://bj.goodr.cn:8003

@@ -12,6 +12,18 @@ const mutations = {
   },
   [types.SETROUTERPARAMS] (state, routerParams) {
     state.routerParams = Object.assign({}, routerParams)
+  },
+  [types.MANAGEPORTALRIGHT] (state, right) {
+    state.managePortalRight = right
+  },
+  [types.PROJECTPORTALRIGHT] (state, right) {
+    state.projectPortalRight = right
+  },
+  [types.TOKENFAILURE] (state, tokenFailure) {
+    state.tokenFailure = tokenFailure
+  },
+  [types.SETMAINFORMdATA] (state, data) {
+    state.mainFormData = Object.assign({}, data)
   }
 }
 

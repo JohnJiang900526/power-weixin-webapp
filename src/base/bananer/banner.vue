@@ -2,29 +2,23 @@
   <div class="banners">
     <div v-if="type==='project'" class="banner-list type-1">
       <img class="banner-bg" src="./banner.png">
-      <div class="human-message">
+      <div class="human-message" :style="{top: showChangProject ? '10%' : '30%'}">
         <div class="avatar">
           <img class="header-logo" src="./default-sir.jpg" alt="头像">
-        </div>
-        <div class="project-msg-wrap">
-          <div @click="changeShow" class="project-name">
-            <p>{{ projectInfoMsg.project_name || '----' }}</p>
-            <span class="fa fa-angle-right"></span>
+          <div class="user-name">
+            <span>你好</span>
+            <span class=""></span>
+            <span>{{ UserSession.UserName || "" }}</span>
           </div>
-          <div class="project-time">
-            <div class="time-list">
-              <span>计划开工：</span>
-              <span>{{ _formatDate(projectInfo.target_start_date) || '----' }}</span>
-            </div>
-            <div class="time-list">
-              <span>计划竣工：</span>
-              <span>{{ _formatDate(projectInfo.target_end_date) || '----' }}</span>
-            </div>
+        </div>
+        <div v-if="showChangProject" class="project-msg-wrap">
+          <div @click="changeShow" class="project-name">
+            <p>{{ projectInfo.project_name || '----' }}</p>
+            <span class="fa fa-angle-right"></span>
           </div>
         </div>
       </div>
     </div>
-
     <div v-if="type==='base'" class="banner-list type-2">
       <img class="banner-bg" src="./banner.png">
       <div class="human-message">
@@ -60,13 +54,23 @@ export default {
   },
   data () {
     return {
-      projectInfoMsg: {},
       UserSession: {}
     }
   },
   computed: {
+    showChangProject () {
+      if (this.managePortalRight) {
+        return false
+      }
+
+      if (this.projectPortalRight) {
+        return true
+      }
+    },
     ...mapGetters([
-      'projectInfo'
+      'projectInfo',
+      'managePortalRight',
+      'projectPortalRight'
     ])
   },
   created () {
@@ -88,7 +92,6 @@ export default {
       let { EpsProjId } = this.UserSession
       ProjectInfo(EpsProjId).then((response) => {
         this.setProjectInfo(response.data)
-        this.projectInfoMsg = Object.assign({}, response.data)
       }).catch((e) => {
         console.log(e)
       })
@@ -114,7 +117,7 @@ export default {
     position: relative;
     width: 100%;
     height: 0;
-    padding-top: 40%;
+    padding-top: 33%;
     overflow: hidden;
     &.type-1 {
       .banner-bg {
@@ -131,14 +134,22 @@ export default {
         left: 50%;
         transform: translate(-50%, -5%);
         .avatar {
-          width: 40px;
-          height: 40px;
+          width: 80%;
           margin: 0 auto;
+          display: flex;
           .header-logo{
+            flex: 0 0 40px;
             display: block;
-            width: 100%;
-            height: 100%;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
+          }
+          .user-name {
+            flex: 1;
+            line-height: 40px;
+            text-align: center;
+            color: #ffffff;
+            font-size: 14px;
           }
         }
         .project-msg-wrap {
@@ -156,19 +167,6 @@ export default {
               font-size: 18px;
               padding-left: 10px;
               font-size: 20px;
-            }
-          }
-          .project-time{
-            display: flex;
-            width: 100%;
-            font-size: 12px;
-            .time-list{
-              flex: 1;
-              text-align: center;
-              color: #ffffff;
-              p{
-                padding: 5px 0;
-              }
             }
           }
         }
