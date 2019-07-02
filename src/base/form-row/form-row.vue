@@ -252,7 +252,7 @@ export default {
             if (!value || value === '') {
               value = 0
             }
-            this.rowValue = parseFloat(Number(value) * 100).toFixed(2)
+            this.rowValue = parseFloat(Number(value) * 100).toFixed(this.ToFixed || 2)
             break
           case 'rate':
             if (!value || value === '') {

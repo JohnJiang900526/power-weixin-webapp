@@ -56,6 +56,7 @@
           :required="fieldItem.required"
           :disabled="fieldItem.disabled"
           :placeholder="fieldItem.placeholder"
+          :ToFixed="fieldItem.ToFixed"
           :field="fieldItem.field"
           :KeyWord="KeyWord"
           :mainformData="currentItem"

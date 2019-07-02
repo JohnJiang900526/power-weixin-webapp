@@ -53,6 +53,7 @@
           :type="fieldItem.type"
           :placeholder="fieldItem.placeholder"
           :field="fieldItem.field"
+          :ToFixed="fieldItem.ToFixed"
           :KeyWord="KeyWord"
           :mainformData="currentItem"
           :comboboxdata="comboboxdata"
