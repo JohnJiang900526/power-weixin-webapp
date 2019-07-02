@@ -882,7 +882,10 @@ export function checkLoginTime (TokenMsg) {
   let nowTime = (new Date()).getTime()
 
   if (TokenMsg) {
-    if ((nowTime - TokenMsg.exp) > 0) {
+    let validTime = Math.floor(nowTime / 1000)
+    let restTime = (TokenMsg.exp - 3600) - validTime
+
+    if (restTime > 0) {
       return true
     } else {
       return false

@@ -156,8 +156,29 @@ export const globalMixin = {
     checkLogin () {
       let currentRoute = this.$route
 
-      if (currentRoute.name === 'Login') {
-        console.log(currentRoute)
+      if (currentRoute.name !== 'Login') {
+        let checkValue = this.checkFunc()
+        if (checkValue) {
+          return false
+        } else {
+          clearStorage()
+          this.$router.push("/login")
+        }
+      }
+    },
+    checkFunc () {
+      let yes = true
+      let no = false
+      let tokenMsg = getTokenMsg()
+      let nowTime = (new Date()).getTime()
+
+      if (tokenMsg) {
+        let validTime = Math.floor(nowTime / 1000)
+        let restTime = (tokenMsg.exp - 3600) - validTime
+
+        return restTime > 0 ? yes : no
+      } else {
+        return no
       }
     }
   }
