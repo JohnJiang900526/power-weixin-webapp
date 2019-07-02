@@ -146,3 +146,19 @@ export const formComponentMixin = {
     DatePicker
   }
 }
+
+// 全局mixin
+export const globalMixin = {
+  created () {
+    this.checkLogin()
+  },
+  methods: {
+    checkLogin () {
+      let currentRoute = this.$route
+
+      if (currentRoute.name === 'Login') {
+        console.log(currentRoute)
+      }
+    }
+  }
+}

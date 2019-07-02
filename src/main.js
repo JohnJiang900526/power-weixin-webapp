@@ -10,6 +10,7 @@ import Cube from 'cube-ui'
 import VueLazyload from 'vue-lazyload'
 import fastClick from 'fastclick'
 import { routerBeforeEach } from './common/js/Util.js'
+import { globalMixin } from './common/js/mixin.js'
 import 'font-awesome/css/font-awesome.css'
 
 Vue.use(WechatPlugin)
@@ -20,6 +21,8 @@ Vue.use(VueLazyload, {
 
 fastClick.attach(document.body)
 Vue.config.productionTip = false
+
+Vue.mixin(globalMixin)
 
 // 导航守卫
 routerBeforeEach(router)
