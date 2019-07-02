@@ -36,7 +36,7 @@
                   <div class="name">{{ item.DeptPositionName }}:</div>
                   <div class="text">{{ item.UserName }}</div>
                 </div>
-                <div class="unit-item unit-content">
+                <div v-if="item.ActName !== '结束'" class="unit-item unit-content">
                   <div class="name">意见:</div>
                   <div class="text">{{ formatInboxStatus(item) }} {{ item.Content }}</div>
                 </div>
@@ -96,33 +96,50 @@ export default {
           if (value.ResultInfo) {
             this.ResultInfo = value.ResultInfo
             this.HistoryMind = this.ResultInfo.HistoryMind
+
+            console.log(this.ResultInfo.HistoryMind)
           }
         }
       })
     },
     // 节点的发送的指令
     formatFlowOperate (node) {
+      let ActName = node.ActName
+      let value = ""
       switch (node.FlowOperate) {
         case EFlowOperate.Active:
-          return '送审'
+          value = '送审'
+          break
         case EFlowOperate.Send:
-          return '同意'
+          value = '同意'
+          break
         case EFlowOperate.GetBack:
-          return '回收'
+          value = '回收'
+          break
         case EFlowOperate.Return:
-          return '驳回'
+          value = '驳回'
+          break
         case EFlowOperate.Stop:
-          return '终止'
+          value = '终止'
+          break
         case EFlowOperate.CheckOut:
-          return '等候签收'
+          value = '等候签收'
+          break
         case EFlowOperate.Delegate:
           if (!node.IsReturnDelegateRoot) {
-            return '委派'
+            value = '委派'
           } else {
-            return '委派返回'
+            value = '委派返回'
           }
+          break
         default:
-          return ''
+          value = ''
+      }
+
+      if (ActName === '开始' || ActName === '结束') {
+        return `${value}(${ActName})`
+      } else {
+        return value
       }
     },
     // 节点的状态
@@ -136,6 +153,8 @@ export default {
           return '(正在处理)'
         case EFlowInboxStatus.WorkEnd:
           return '(已提交)'
+        case 70:
+          return '(自动跳过)'
         default:
           return ''
       }
@@ -226,7 +245,7 @@ export default {
                 padding: 0 15px;
               }
               .flow-operate {
-                flex: 0 0 60px;
+                flex: 0 0 100px;
                 text-align: right;
               }
             }
