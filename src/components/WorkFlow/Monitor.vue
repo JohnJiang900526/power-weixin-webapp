@@ -96,8 +96,6 @@ export default {
           if (value.ResultInfo) {
             this.ResultInfo = value.ResultInfo
             this.HistoryMind = this.ResultInfo.HistoryMind
-
-            console.log(this.ResultInfo.HistoryMind)
           }
         }
       })
