@@ -72,6 +72,12 @@ export const commonComponentMixin = {
         }
       }).catch((err) => {
         this.mx_isLoading = false
+        if (err.message === 501) {
+          clearStorage()
+          this.$router.push('/login')
+          this.setTokenFailure(true)
+          return false
+        }
         this.MixinAlertShowEvent(err.message)
       })
     },
@@ -162,6 +168,7 @@ export const globalMixin = {
           return false
         } else {
           clearStorage()
+          this.setTokenFailure(true)
           this.$router.push("/login")
         }
       }
@@ -173,13 +180,16 @@ export const globalMixin = {
       let nowTime = (new Date()).getTime()
 
       if (tokenMsg) {
-        let validTime = Math.floor(nowTime / 1000)
+        let validTime = Math.ceil(nowTime / 1000)
         let restTime = (tokenMsg.exp - 3600) - validTime
 
         return restTime > 0 ? yes : no
       } else {
         return no
       }
-    }
+    },
+    ...mapMutations({
+      setTokenFailure: 'TOKENFAILURE'
+    })
   }
 }
