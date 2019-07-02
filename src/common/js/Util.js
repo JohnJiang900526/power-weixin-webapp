@@ -541,19 +541,27 @@ export function formatFromDataToView (comboboxdata, formData, keyWord) {
       field = _keyWord
     }
 
-    if (obj[field]) {
-      let selectItem = comboboxdata[key]
-      let TextField = selectItem['TextField']
-      let ValueField = selectItem['ValueField']
-      let value = obj[field]
+    if (keyWord && keyWord === _keyWord) {
+      if (obj[field]) {
+        let selectItem = Object.assign({}, comboboxdata[key])
+        let TextField = selectItem['TextField']
+        let ValueField = selectItem['ValueField']
+        let value = obj[field]
+        let dataItem = findDataItem(selectItem['Data'], value, ValueField, TextField)
 
-      let dataItem = findDataItem(selectItem['Data'], value, ValueField, TextField)
-
-      obj[field] = dataItem[TextField]
+        obj[field] = dataItem[TextField]
+      }
     }
   }
-
   return obj
+}
+
+export function formatWebToView (selectItem, value) {
+  let TextField = selectItem['TextField']
+  let ValueField = selectItem['ValueField']
+  let dataItem = findDataItem(selectItem['Data'], value, ValueField, TextField)
+
+  return dataItem[TextField]
 }
 
 // 获取页面显示信息修改成后端可以识别的数据

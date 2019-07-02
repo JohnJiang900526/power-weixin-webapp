@@ -122,7 +122,6 @@
           name="description"
           contenteditable="true"
           v-model="rowValue"
-          :max="200"
           :disabled="canEdit"
           :readonly="readonly"
           :required="required"
@@ -146,7 +145,7 @@
 import { mapGetters } from 'vuex'
 import { PowerSelect } from 'components/index.js'
 import { DatePicker } from 'cube-ui'
-import { formatDate, toThousand, formatNumber } from 'common/js/Util.js'
+import { formatDate, toThousand, formatNumber, formatWebToView } from 'common/js/Util.js'
 import { XTextarea, Group } from 'vux'
 import CheckIcon from 'base/check-icon/check-icon.vue'
 
@@ -268,9 +267,20 @@ export default {
             this.rowValue = `${toThousand(main, true)}.${formatNumber(tail, 8)}`
             break
           default:
-            this.rowValue = value
+            this.rowValue = this.textSelectHandle(value)
         }
       })
+    },
+    // 处理特使text select
+    textSelectHandle (value) {
+      let comboboxdata = this.comboboxdata
+      let selectItem = comboboxdata[`${this.KeyWord}.${this.field}`]
+
+      if (selectItem) {
+        return formatWebToView(selectItem, value)
+      } else {
+        return value
+      }
     },
     change (value) {
       this.rowValue = value

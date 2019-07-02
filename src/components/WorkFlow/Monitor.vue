@@ -38,7 +38,7 @@
                 </div>
                 <div class="unit-item unit-content">
                   <div class="name">意见:</div>
-                  <div class="text">{{ formatInboxStatus(item) }} {{ item.BeforeContent }}</div>
+                  <div class="text">{{ formatInboxStatus(item) }} {{ item.Content }}</div>
                 </div>
               </div>
             </div>
