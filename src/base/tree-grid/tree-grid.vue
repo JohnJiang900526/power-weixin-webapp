@@ -275,11 +275,7 @@ export default {
     }
   },
   mounted () {
-    this.timer && clearTimeout(this.timer)
-
-    this.timer = setTimeout(() => {
-      this.setData(this.item)
-    }, 500)
+    this.setData(this.item)
   },
   methods: {
     selectItemView (item) {
