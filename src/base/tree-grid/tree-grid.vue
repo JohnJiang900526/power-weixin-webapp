@@ -275,6 +275,8 @@ export default {
     }
   },
   mounted () {
+    this.timer && clearTimeout(this.timer)
+
     this.timer = setTimeout(() => {
       this.setData(this.item)
     }, 500)
@@ -340,10 +342,11 @@ export default {
   },
   watch: {
     item: {
-      handler (newItem, oldItem) {
+      handler (newItem) {
         this.setData(newItem)
       },
-      immediate: true
+      immediate: true,
+      deep: true
     }
   },
   components: {

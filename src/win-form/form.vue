@@ -695,6 +695,9 @@ export default {
       setMainFormData: 'SETMAINFORMdATA'
     })
   },
+  beforeDestroy () {
+    this.timer && clearTimeout(this.timer)
+  },
   destroyed () {
     this.setMainFormData(null)
     this.hasMainFormData = false

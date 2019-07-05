@@ -102,20 +102,19 @@ export default {
     },
     // 节点的发送的指令
     formatFlowOperate (node) {
-      let ActName = node.ActName
       let value = ""
       switch (node.FlowOperate) {
         case EFlowOperate.Active:
           value = '送审'
           break
         case EFlowOperate.Send:
-          value = '同意'
+          value = '发送'
           break
         case EFlowOperate.GetBack:
           value = '回收'
           break
         case EFlowOperate.Return:
-          value = '驳回'
+          value = '退回'
           break
         case EFlowOperate.Stop:
           value = '终止'
@@ -134,11 +133,7 @@ export default {
           value = ''
       }
 
-      if (ActName === '开始' || ActName === '结束') {
-        return `${value}(${ActName})`
-      } else {
-        return value
-      }
+      return value
     },
     // 节点的状态
     formatInboxStatus (node) {

@@ -189,6 +189,8 @@ export default {
       this.option = Object.assign(this.option, textNameOption)
       this.KeyWord = this.chileTableItem.KeyWord
       this.tableType = getTableType(tableType)
+
+      this.setData(this.tableData.values)
     },
     formRowChange (item) {
       this.currentItem[item.field] = item.value
@@ -324,17 +326,33 @@ export default {
       })
 
       return arr
+    },
+    setData (values) {
+      this.$nextTick(() => {
+        this.defaultData = values.concat()
+        this.tableLists = this.formatTableLists()
+      })
     }
   },
+  beforeDestroy () {
+    this.timer && clearTimeout(this.timer)
+  },
   watch: {
-    tableData: {
-      handler (newData, oldData) {
-        if (newData.values) {
-          this.defaultData = newData.values.concat()
-          this.tableLists = this.formatTableLists()
-        }
+    // tableData: {
+    //   handler (newData, oldData) {
+    //     if (newData.values) {
+    //       this.setData(newData.values)
+    //     }
+    //   },
+    //   immediate: true,
+    //   deep: true
+    // },
+    "tableData.values": {
+      handler (values, oldValues) {
+        this.setData(values)
       },
-      immediate: true
+      immediate: true,
+      deep: true
     }
   },
   components: {
