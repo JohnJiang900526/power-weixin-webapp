@@ -312,6 +312,7 @@ export default {
       if (this.option && this.option.title && this.option.title.field) {
         let field = this.option.title.field
         let type = this.option.title.type
+
         this.title = dataConversion(newItem[field], type)
       }
       if (this.option && this.option.left && this.option.left.field) {

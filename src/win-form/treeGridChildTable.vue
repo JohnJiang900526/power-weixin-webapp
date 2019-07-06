@@ -181,7 +181,7 @@ export default {
   methods: {
     // 初始化
     tableInit () {
-      let formListOption = this.chileTableItem.formListOption
+      let formListOption = Object.assign({}, this.chileTableItem.formListOption)
       let textNameOption = formListOption.textNameOption
       let tableType = this.chileTableItem.tableListType
 
@@ -189,8 +189,6 @@ export default {
       this.option = Object.assign(this.option, textNameOption)
       this.KeyWord = this.chileTableItem.KeyWord
       this.tableType = getTableType(tableType)
-
-      this.setData(this.tableData.values)
     },
     formRowChange (item) {
       this.currentItem[item.field] = item.value
@@ -328,8 +326,12 @@ export default {
       return arr
     },
     setData (values) {
+      if (!values) {
+        values = [...this.defaultData]
+      }
+
       this.$nextTick(() => {
-        this.defaultData = values.concat()
+        this.defaultData = [...values]
         this.tableLists = this.formatTableLists()
       })
     }
@@ -338,18 +340,12 @@ export default {
     this.timer && clearTimeout(this.timer)
   },
   watch: {
-    // tableData: {
-    //   handler (newData, oldData) {
-    //     if (newData.values) {
-    //       this.setData(newData.values)
-    //     }
-    //   },
-    //   immediate: true,
-    //   deep: true
-    // },
     "tableData.values": {
       handler (values, oldValues) {
-        this.setData(values)
+        if (!values) {
+          return false
+        }
+        this.setData(values || [])
       },
       immediate: true,
       deep: true

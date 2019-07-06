@@ -116,25 +116,25 @@
         <ul class="lists">
           <li class="list-unit">
             <div class="list-unit-inner">
-              <div class="list-unit-item name">累计收款金额:</div>
+              <div class="list-unit-item name">累计已收款金额(不含退税):</div>
               <div class="list-unit-item value">{{skqk1_ljskje.ContractAmountRMB_S01 || 0}}万元</div>
             </div>
           </li>
           <li class="list-unit">
             <div class="list-unit-inner">
-              <div class="list-unit-item name">实时累计已付款金额:</div>
+              <div class="list-unit-item name">截止到目前为止累计已付款金额:</div>
               <div class="list-unit-item value">{{skqk2_ljfkje.ContractAmountRMB_S02 || 0}}万元</div>
             </div>
           </li>
           <li class="list-unit">
             <div class="list-unit-inner">
-              <div class="list-unit-item name">实时累计合同付款金额:</div>
+              <div class="list-unit-item name">截止到目前为止累计合同付款金额:</div>
               <div class="list-unit-item value">{{skqk3_ljhtfkje.ContractAmountRMB_S03 || 0}}万元</div>
             </div>
           </li>
           <li class="list-unit">
             <div class="list-unit-inner">
-              <div class="list-unit-item name">实时累计分包采购合同付款金额:</div>
+              <div class="list-unit-item name">截止到目前为止分包采购合同累计签约金额:</div>
               <div class="list-unit-item value">{{skqk4_cghtqyje.ContractAmountRMB_S04 || 0}}万元</div>
             </div>
           </li>

@@ -16,7 +16,7 @@
       <div v-if="switches.length > 0" class="form-content">
         <div
             v-for="(tableItem, tableIndex) in switches"
-            :key="tableIndex"
+            :key="tableItem.KeyWord"
             :class="'form-content-item ' +  tableItem.type"
             v-show="_isShow(tableIndex)"
           >
@@ -446,11 +446,14 @@ export default {
             item.values = []
           }
 
-          this.switches.forEach((switchItem, switchIndex) => {
+          let switches = [...this.switches]
+          switches.forEach((switchItem, switchIndex) => {
             if (switchItem.KeyWord === item.KeyWord) {
               switchItem.data = Object.assign({}, item)
             }
           })
+
+          this.switches = [...switches]
         })
       })
     },
