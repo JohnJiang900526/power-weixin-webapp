@@ -37,7 +37,7 @@
                   <div class="text">{{ item.UserName }}</div>
                 </div>
                 <div v-if="item.ActName !== '结束'" class="unit-item unit-content">
-                  <div class="name">意见:</div>
+                  <div v-if="false" class="name">意见:</div>
                   <div class="text">{{ formatInboxStatus(item) }} {{ item.Content }}</div>
                 </div>
               </div>
