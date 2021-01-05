@@ -20,7 +20,7 @@
     }
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "better-scroll": "^1.12.4",
     "body-parser": "^1.18.3",
     "cube-ui": "^1.10.8",
